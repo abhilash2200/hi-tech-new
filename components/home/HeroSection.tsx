@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import MorphText from "@/components/ui/morph-text";
+import { GooeyTextReveal } from "@/components/ui/gooey-text-reveal";
 
 const backgroundFigures = [
   "/assets/home/figure/1.png",
@@ -94,9 +95,22 @@ const HeroSection = () => {
 
           {/* Content */}
           <div className="relative z-10 mt-2 lg:mt-4">
-            <p className="text-[#EFE6D8] font-orbitron font-black text-sm lg:text-lg tracking-[0.15em] uppercase mb-1">OUR</p>
-            <p className="text-[#EFE6D8] font-orbitron font-black text-3xl sm:text-5xl lg:text-6xl tracking-widest uppercase leading-none drop-shadow-[0_0_20px_rgba(242,193,78,0.2)]">TECHNOLOGY</p>
-            <p className="text-[#EFE6D8] font-orbitron font-black text-sm lg:text-lg tracking-[0.1em] uppercase mt-2">TURNS YOU INTO A</p>
+            <GooeyTextReveal
+              mode="immediate"
+              duration={1.2}
+              stagger={0.15}
+              blurAmount={0.3}
+            >
+              <p className="text-[#EFE6D8] font-orbitron font-black text-sm lg:text-lg tracking-[0.15em] uppercase mb-1">
+                OUR
+              </p>
+              <p className="text-[#EFE6D8] font-orbitron font-black text-3xl sm:text-5xl lg:text-6xl tracking-widest uppercase leading-none drop-shadow-[0_0_20px_rgba(242,193,78,0.2)]">
+                TECHNOLOGY
+              </p>
+              <p className="text-[#EFE6D8] font-orbitron font-black text-sm lg:text-lg tracking-[0.1em] uppercase mt-2">
+                TURNS YOU INTO A
+              </p>
+            </GooeyTextReveal>
 
             <div className="mt-4 mb-6 min-h-[50px] sm:min-h-[70px] lg:min-h-[85px] flex items-center overflow-visible drop-shadow-[0_0_15px_rgba(242,193,78,0.4)]">
               <MorphText
