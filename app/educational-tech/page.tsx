@@ -109,15 +109,15 @@ const EducationalTechPage = () => {
       </section>
 
       {/* Section 2: What we do */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-white text-black p-20 flex items-center border-l border-gray-100">
-        <div className="container mx-auto flex gap-20 items-center">
-          <div className="w-1/2">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-white text-black p-6 sm:p-12 lg:p-20 flex items-center border-l border-gray-100 py-16 lg:py-0">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+          <div className="w-full lg:w-1/2">
             <span className="text-brand-red font-bold text-[10px] tracking-widest uppercase mb-4 block">OUR EXPERTISE</span>
-            <h2 className="font-orbitron text-6xl font-black mb-8 tracking-tight uppercase">Interactive <br /> <span className="text-brand-red">Curriculum</span></h2>
-            <p className="text-gray-500 text-xl leading-relaxed font-rajdhani mb-10">
+            <h2 className="font-orbitron text-3xl sm:text-5xl lg:text-6xl font-black mb-6 lg:mb-8 tracking-tight uppercase">Interactive <br /> <span className="text-brand-red">Curriculum</span></h2>
+            <p className="text-gray-500 text-base sm:text-xl leading-relaxed font-rajdhani mb-8 lg:mb-10">
               We specialize in creating high-quality 3D educational videos, interactive simulations, and K-12 digital content that makes learning engaging and effective.
             </p>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
               {[
                 { icon: <BookOpen className="w-6 h-6" />, title: "K-12 Content", desc: "Syllabus-aligned 3D animations for all grades." },
                 { icon: <Monitor className="w-6 h-6" />, title: "E-Learning", desc: "Comprehensive digital modules for higher ed." },
@@ -132,8 +132,8 @@ const EducationalTechPage = () => {
               ))}
             </div>
           </div>
-          <div className="w-1/2">
-            <div className="aspect-video bg-gray-50 rounded-[3rem] overflow-hidden relative border border-gray-100 shadow-2xl group">
+          <div className="w-full lg:w-1/2">
+            <div className="aspect-video bg-gray-50 rounded-[2rem] sm:rounded-[3rem] overflow-hidden relative border border-gray-100 shadow-2xl group">
                <div className="absolute inset-0 bg-gradient-to-br from-brand-red/10 to-transparent group-hover:opacity-0 transition-opacity" />
                <div className="w-full h-full flex items-center justify-center">
                   <div className="text-brand-red/20 font-orbitron text-[10vw] font-black select-none">EDTECH</div>
@@ -144,12 +144,12 @@ const EducationalTechPage = () => {
       </section>
 
       {/* Section 3: AR/VR in Education */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-gray-50 text-black p-20 flex items-center border-l border-gray-100">
-        <div className="container mx-auto flex gap-24 items-center">
-          <div className="w-1/2 order-2">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-gray-50 text-black p-6 sm:p-12 lg:p-20 flex items-center border-l border-gray-100 py-16 lg:py-0">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-center">
+          <div className="w-full lg:w-1/2 order-2 lg:order-2">
             <span className="text-brand-red font-bold text-[10px] tracking-widest uppercase mb-4 block">NEXT-GEN TECH</span>
-            <h2 className="font-orbitron text-6xl font-black mb-8 tracking-tight uppercase">Immersive <br /> <span className="text-brand-red">Simulations</span></h2>
-            <p className="text-gray-500 text-xl leading-relaxed font-rajdhani mb-10">
+            <h2 className="font-orbitron text-3xl sm:text-5xl lg:text-6xl font-black mb-6 lg:mb-8 tracking-tight uppercase">Immersive <br /> <span className="text-brand-red">Simulations</span></h2>
+            <p className="text-gray-500 text-base sm:text-xl leading-relaxed font-rajdhani mb-8 lg:mb-10">
               Beyond traditional videos, we create AR and VR experiences that allow students to explore the human body, travel through space, or conduct virtual lab experiments safely.
             </p>
             <div className="space-y-4">
@@ -161,16 +161,16 @@ const EducationalTechPage = () => {
               ))}
             </div>
           </div>
-          <div className="w-1/2 order-1">
-             <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-square bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-8 flex flex-col justify-end group hover:bg-brand-red transition-all duration-500">
+          <div className="w-full lg:w-1/2 order-1 lg:order-1">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="aspect-square bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-6 sm:p-8 flex flex-col justify-end group hover:bg-brand-red transition-all duration-500">
                    <Award className="w-10 h-10 text-brand-red mb-4 group-hover:text-white transition-colors" />
-                   <h4 className="font-orbitron font-bold text-lg group-hover:text-white transition-colors">Award Winning</h4>
+                   <h4 className="font-orbitron font-bold text-base sm:text-lg group-hover:text-white transition-colors">Award Winning</h4>
                    <p className="text-gray-400 text-xs font-rajdhani group-hover:text-white/70 transition-colors">Best EdTech Content Provider 2024</p>
                 </div>
-                <div className="aspect-square bg-brand-red rounded-3xl shadow-xl overflow-hidden p-8 flex flex-col justify-end text-white translate-y-12">
+                <div className="aspect-square bg-brand-red rounded-3xl shadow-xl overflow-hidden p-6 sm:p-8 flex flex-col justify-end text-white translate-y-0 sm:translate-y-12">
                    <Users className="w-10 h-10 mb-4" />
-                   <h4 className="font-orbitron font-bold text-lg">1M+ Students</h4>
+                   <h4 className="font-orbitron font-bold text-base sm:text-lg">1M+ Students</h4>
                    <p className="text-white/70 text-xs font-rajdhani">Learning through our 3D modules daily.</p>
                 </div>
              </div>
@@ -179,17 +179,17 @@ const EducationalTechPage = () => {
       </section>
 
       {/* Section 4: CTA */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-white flex flex-col items-center justify-center text-black text-center p-20 relative border-l border-gray-100">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-white flex flex-col items-center justify-center text-black text-center p-6 sm:p-12 lg:p-20 relative border-l border-gray-100 py-16 lg:py-0">
         <div className="absolute inset-0 opacity-[0.01] pointer-events-none select-none">
           <span className="font-orbitron text-[40vw] font-black text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">EDU</span>
         </div>
-        <h2 className="font-orbitron text-8xl font-black mb-8 leading-none tracking-tighter relative z-10">
+        <h2 className="font-orbitron text-4xl sm:text-6xl lg:text-8xl font-black mb-6 sm:mb-8 leading-none tracking-tighter relative z-10">
           READY TO TRANSFORM <br /> <span className="text-brand-red">EDUCATION?</span>
         </h2>
-        <p className="max-w-xl text-gray-500 text-2xl font-rajdhani mb-12 relative z-10">
+        <p className="max-w-xl text-gray-500 text-lg sm:text-2xl font-rajdhani mb-8 sm:mb-12 relative z-10">
           Let&apos;s collaborate to build the digital future of your institution or startup.
         </p>
-        <button className="px-16 py-6 bg-brand-red text-white font-orbitron font-bold text-sm tracking-[0.3em] hover:bg-black transition-all rounded-full shadow-2xl relative z-10">
+        <button className="px-10 sm:px-16 py-4 sm:py-6 bg-brand-red text-white font-orbitron font-bold text-xs sm:text-sm tracking-[0.3em] hover:bg-black transition-all rounded-full shadow-2xl relative z-10">
           GET A QUOTE
         </button>
       </section>

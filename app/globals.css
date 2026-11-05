@@ -12,9 +12,16 @@
 
 @layer base {
 
+  html {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-white text-black antialiased overflow-x-hidden;
     font-family: var(--font-rajdhani), sans-serif;
+    max-width: 100%;
+    width: 100%;
   }
 
   h1,
@@ -97,6 +104,15 @@
       contain: layout paint style;
       content-visibility: auto;
       contain-intrinsic-size: 100vw 100vh;
+    }
+  }
+
+  /* Mobile Single-Scroll Constraint: Strictly normal vertical, zero horizontal overflow */
+  @media (max-width: 1023px) {
+    .horizontal-section {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
     }
   }
 }

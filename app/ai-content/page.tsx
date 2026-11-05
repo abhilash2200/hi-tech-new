@@ -109,15 +109,15 @@ const AIContentPage = () => {
       </section>
 
       {/* Section 2: AI Capabilities */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-white text-black p-20 flex items-center border-l border-gray-100">
-        <div className="container mx-auto flex gap-20 items-center">
-          <div className="w-1/2">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-white text-black p-6 sm:p-12 lg:p-20 flex items-center border-l border-gray-100 py-16 lg:py-0">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+          <div className="w-full lg:w-1/2">
             <span className="text-brand-red font-bold text-[10px] tracking-widest uppercase mb-4 block">TECH STACK</span>
-            <h2 className="font-orbitron text-6xl font-black mb-8 tracking-tight uppercase">Infinite <br /> <span className="text-brand-red">Possibilities</span></h2>
-            <p className="text-gray-500 text-xl leading-relaxed font-rajdhani mb-10">
+            <h2 className="font-orbitron text-3xl sm:text-5xl lg:text-6xl font-black mb-6 lg:mb-8 tracking-tight uppercase">Infinite <br /> <span className="text-brand-red">Possibilities</span></h2>
+            <p className="text-gray-500 text-base sm:text-xl leading-relaxed font-rajdhani mb-8 lg:mb-10">
               We integrate cutting-edge AI models into our creative pipeline to speed up production, generate unique assets, and create hyper-personalized content for our clients.
             </p>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
               {[
                 { icon: <Cpu className="w-6 h-6" />, title: "AI Animation", desc: "Automating complex character movements." },
                 { icon: <Sparkles className="w-6 h-6" />, title: "Generative Art", desc: "Unique visual styles powered by neural networks." },
@@ -132,14 +132,14 @@ const AIContentPage = () => {
               ))}
             </div>
           </div>
-          <div className="w-1/2">
-             <div className="grid grid-cols-2 gap-6 relative">
+          <div className="w-full lg:w-1/2">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative">
                 <div className="absolute inset-0 bg-brand-red/5 blur-[100px] -z-10 rounded-full" />
-                <div className="aspect-square bg-white border border-gray-100 rounded-[2.5rem] shadow-sm p-10 flex flex-col justify-center items-center text-center hover:scale-105 transition-transform group">
+                <div className="aspect-square bg-white border border-gray-100 rounded-[2.5rem] shadow-sm p-8 sm:p-10 flex flex-col justify-center items-center text-center hover:scale-105 transition-transform group">
                    <div className="text-brand-red mb-4 group-hover:rotate-12 transition-transform"><Wand2 size={40} /></div>
                    <h5 className="font-orbitron font-bold text-sm uppercase">Auto-VFX</h5>
                 </div>
-                <div className="aspect-square bg-gray-50 border border-gray-100 rounded-[2.5rem] shadow-sm p-10 flex flex-col justify-center items-center text-center translate-y-10 hover:scale-105 transition-transform group">
+                <div className="aspect-square bg-gray-50 border border-gray-100 rounded-[2.5rem] shadow-sm p-8 sm:p-10 flex flex-col justify-center items-center text-center translate-y-0 sm:translate-y-10 hover:scale-105 transition-transform group">
                    <div className="text-brand-red mb-4 group-hover:rotate-12 transition-transform"><Database size={40} /></div>
                    <h5 className="font-orbitron font-bold text-sm uppercase">Asset Gen</h5>
                 </div>
@@ -149,12 +149,12 @@ const AIContentPage = () => {
       </section>
 
       {/* Section 3: The AI Workflow */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-gray-50 text-black p-20 flex items-center border-l border-gray-100">
-        <div className="container mx-auto flex gap-24 items-center">
-          <div className="w-1/2 order-2">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-gray-50 text-black p-6 sm:p-12 lg:p-20 flex items-center border-l border-gray-100 py-16 lg:py-0">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-center">
+          <div className="w-full lg:w-1/2 order-2 lg:order-2">
             <span className="text-brand-red font-bold text-[10px] tracking-widest uppercase mb-4 block">HUMAN + AI</span>
-            <h2 className="font-orbitron text-6xl font-black mb-8 tracking-tight uppercase">Augmented <br /> <span className="text-brand-red">Artistry</span></h2>
-            <p className="text-gray-500 text-xl leading-relaxed font-rajdhani mb-10">
+            <h2 className="font-orbitron text-3xl sm:text-5xl lg:text-6xl font-black mb-6 lg:mb-8 tracking-tight uppercase">Augmented <br /> <span className="text-brand-red">Artistry</span></h2>
+            <p className="text-gray-500 text-base sm:text-xl leading-relaxed font-rajdhani mb-8 lg:mb-10">
               We believe AI is a tool that empowers artists, not replaces them. Our team uses AI to handle repetitive tasks, giving them more time to focus on the soul of the project: the story and the emotion.
             </p>
             <div className="space-y-6">
@@ -173,11 +173,11 @@ const AIContentPage = () => {
                ))}
             </div>
           </div>
-          <div className="w-1/2 order-1">
-             <div className="aspect-square bg-white rounded-[3rem] border border-gray-100 shadow-2xl flex items-center justify-center p-20 relative overflow-hidden group">
+          <div className="w-full lg:w-1/2 order-1 lg:order-1">
+             <div className="aspect-square bg-white rounded-[2rem] sm:rounded-[3rem] border border-gray-100 shadow-2xl flex items-center justify-center p-12 sm:p-20 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-red/5 to-transparent group-hover:opacity-0 transition-opacity" />
                 <div className="relative z-10 w-full h-full border-2 border-dashed border-gray-100 rounded-full flex items-center justify-center animate-pulse">
-                   <Sparkles className="text-brand-red w-20 h-20" />
+                   <Sparkles className="text-brand-red w-12 h-12 sm:w-20 sm:h-20" />
                 </div>
              </div>
           </div>
@@ -185,14 +185,14 @@ const AIContentPage = () => {
       </section>
 
       {/* Section 4: CTA */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-white flex flex-col items-center justify-center text-black text-center p-20 relative border-l border-gray-100">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-white flex flex-col items-center justify-center text-black text-center p-6 sm:p-12 lg:p-20 relative border-l border-gray-100 py-16 lg:py-0">
         <div className="absolute inset-0 opacity-[0.01] pointer-events-none select-none">
           <span className="font-orbitron text-[40vw] font-black text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">AUTO</span>
         </div>
-        <h2 className="font-orbitron text-8xl font-black mb-8 leading-none tracking-tighter relative z-10">
+        <h2 className="font-orbitron text-4xl sm:text-6xl lg:text-8xl font-black mb-6 sm:mb-8 leading-none tracking-tighter relative z-10">
           THE FUTURE IS <br /> <span className="text-brand-red">NOW</span>
         </h2>
-        <p className="max-w-xl text-gray-500 text-2xl font-rajdhani mb-12 relative z-10">
+        <p className="max-w-xl text-gray-500 text-lg sm:text-2xl font-rajdhani mb-8 sm:mb-12 relative z-10">
           Join the AI revolution and elevate your content production to the next level.
         </p>
         <button className="px-16 py-6 bg-brand-red text-white font-orbitron font-bold text-sm tracking-[0.3em] hover:bg-black transition-all rounded-full shadow-2xl relative z-10">

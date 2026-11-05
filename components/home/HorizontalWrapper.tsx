@@ -135,24 +135,11 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
         };
       });
 
-      // Mobile / Tablet: Smooth vertical flow (< 1024px)
+      // Mobile / Tablet (< 1024px): Strictly 100% native vertical scroll
+      // No horizontal pinning, no touch interception, no synthetic scroll hijacking
       mm.add("(max-width: 1023px)", () => {
-        const lenis = new Lenis({
-          duration: 0.9,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          orientation: "vertical",
-          smoothWheel: true,
-        });
-
-        const updateRaf = (time: number) => {
-          lenis.raf(time * 1000);
-        };
-        gsap.ticker.add(updateRaf);
-
-        return () => {
-          gsap.ticker.remove(updateRaf);
-          lenis.destroy();
-        };
+        // Native browser handles vertical scrolling naturally
+        return () => {};
       });
 
       return () => {
@@ -163,10 +150,13 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
   );
 
   return (
-    <div ref={containerRef} className="lg:overflow-hidden min-h-screen w-full bg-white">
+    <div
+      ref={containerRef}
+      className="w-full max-w-full min-h-screen bg-white overflow-x-hidden lg:overflow-hidden"
+    >
       <div
         ref={wrapperRef}
-        className="flex flex-col lg:flex-row lg:flex-nowrap w-full lg:w-fit h-auto lg:h-screen overflow-visible will-change-transform"
+        className="flex flex-col lg:flex-row lg:flex-nowrap w-full max-w-full lg:w-fit h-auto lg:h-screen overflow-x-hidden lg:overflow-visible will-change-transform"
       >
         {children}
       </div>

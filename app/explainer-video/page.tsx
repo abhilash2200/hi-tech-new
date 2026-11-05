@@ -109,15 +109,15 @@ const ExplainerVideoPage = () => {
       </section>
 
       {/* Section 2: Why Explainer Videos */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-white text-black p-20 flex items-center border-l border-gray-100">
-        <div className="container mx-auto flex gap-20 items-center">
-          <div className="w-1/2">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-white text-black p-6 sm:p-12 lg:p-20 flex items-center border-l border-gray-100 py-16 lg:py-0">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+          <div className="w-full lg:w-1/2">
             <span className="text-brand-red font-bold text-[10px] tracking-widest uppercase mb-4 block">WHY US?</span>
-            <h2 className="font-orbitron text-6xl font-black mb-8 tracking-tight uppercase">High Impact <br /> <span className="text-brand-red">Visuals</span></h2>
-            <p className="text-gray-500 text-xl leading-relaxed font-rajdhani mb-10">
+            <h2 className="font-orbitron text-3xl sm:text-5xl lg:text-6xl font-black mb-6 lg:mb-8 tracking-tight uppercase">High Impact <br /> <span className="text-brand-red">Visuals</span></h2>
+            <p className="text-gray-500 text-base sm:text-xl leading-relaxed font-rajdhani mb-8 lg:mb-10">
               We help brands communicate their value proposition through engaging storytelling. Our explainer videos are designed to boost conversions and simplify user onboarding.
             </p>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
               {[
                 { icon: <Zap className="w-6 h-6" />, title: "Instant Clarity", desc: "Turn complex features into simple benefits." },
                 { icon: <Target className="w-6 h-6" />, title: "High Retention", desc: "Visual storytelling ensures higher recall." },
@@ -132,37 +132,37 @@ const ExplainerVideoPage = () => {
               ))}
             </div>
           </div>
-          <div className="w-1/2">
-            <div className="aspect-video bg-gray-900 rounded-[3rem] overflow-hidden relative border border-gray-100 shadow-2xl group flex items-center justify-center cursor-pointer">
+          <div className="w-full lg:w-1/2">
+            <div className="aspect-video bg-gray-900 rounded-[2rem] sm:rounded-[3rem] overflow-hidden relative border border-gray-100 shadow-2xl group flex items-center justify-center cursor-pointer">
                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
-               <div className="relative z-10 w-24 h-24 bg-brand-red rounded-full flex items-center justify-center text-white shadow-2xl scale-100 group-hover:scale-110 transition-transform">
-                  <Play className="w-10 h-10 fill-current ml-2" />
+               <div className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 bg-brand-red rounded-full flex items-center justify-center text-white shadow-2xl scale-100 group-hover:scale-110 transition-transform">
+                  <Play className="w-8 h-8 sm:w-10 sm:h-10 fill-current ml-2" />
                </div>
-               <div className="absolute bottom-8 left-8 text-white/50 font-orbitron text-[8px] uppercase tracking-widest">Showreel 2024</div>
+               <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 text-white/50 font-orbitron text-[8px] uppercase tracking-widest">Showreel 2024</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Section 3: Process */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-gray-50 text-black p-20 flex items-center border-l border-gray-100">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-gray-50 text-black p-6 sm:p-12 lg:p-20 flex items-center border-l border-gray-100 py-16 lg:py-0">
         <div className="container mx-auto">
-           <div className="text-center mb-16">
+           <div className="text-center mb-10 lg:mb-16">
               <span className="text-brand-red font-bold text-[10px] tracking-widest uppercase mb-4 block">THE PIPELINE</span>
-              <h2 className="font-orbitron text-6xl font-black tracking-tight uppercase">How we <span className="text-brand-red">Work</span></h2>
+              <h2 className="font-orbitron text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight uppercase">How we <span className="text-brand-red">Work</span></h2>
            </div>
            
-           <div className="grid grid-cols-4 gap-8">
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {[
                 { step: "01", title: "Scripting", desc: "Crafting the narrative that sells." },
                 { step: "02", title: "Storyboarding", desc: "Visualizing every frame." },
                 { step: "03", title: "Animation", desc: "Bringing the design to life." },
                 { step: "04", title: "Voiceover", desc: "Adding the perfect sound." },
               ].map((item, i) => (
-                <div key={i} className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:bg-brand-red transition-all duration-500">
-                   <div className="text-5xl font-orbitron font-black text-gray-50 mb-6 group-hover:text-white/10 transition-colors">{item.step}</div>
-                   <h4 className="font-orbitron font-bold text-lg mb-4 group-hover:text-white transition-colors">{item.title}</h4>
-                   <p className="text-gray-400 font-rajdhani group-hover:text-white/70 transition-colors">{item.desc}</p>
+                <div key={i} className="bg-white p-6 sm:p-10 rounded-[1.5rem] sm:rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:bg-brand-red transition-all duration-500">
+                   <div className="text-4xl sm:text-5xl font-orbitron font-black text-gray-50 mb-4 sm:mb-6 group-hover:text-white/10 transition-colors">{item.step}</div>
+                   <h4 className="font-orbitron font-bold text-base sm:text-lg mb-2 sm:mb-4 group-hover:text-white transition-colors">{item.title}</h4>
+                   <p className="text-gray-400 font-rajdhani group-hover:text-white/70 transition-colors text-sm sm:text-base">{item.desc}</p>
                 </div>
               ))}
            </div>
@@ -170,17 +170,17 @@ const ExplainerVideoPage = () => {
       </section>
 
       {/* Section 4: CTA */}
-      <section className="horizontal-section shrink-0 w-screen h-screen bg-white flex flex-col items-center justify-center text-black text-center p-20 relative border-l border-gray-100">
+      <section className="horizontal-section shrink-0 w-full lg:w-screen h-auto lg:h-screen min-h-screen bg-white flex flex-col items-center justify-center text-black text-center p-6 sm:p-12 lg:p-20 relative border-l border-gray-100 py-16 lg:py-0">
         <div className="absolute inset-0 opacity-[0.01] pointer-events-none select-none">
           <span className="font-orbitron text-[40vw] font-black text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">PLAY</span>
         </div>
-        <h2 className="font-orbitron text-8xl font-black mb-8 leading-none tracking-tighter relative z-10">
+        <h2 className="font-orbitron text-4xl sm:text-6xl lg:text-8xl font-black mb-6 sm:mb-8 leading-none tracking-tighter relative z-10">
           BOOST YOUR <br /> <span className="text-brand-red">CONVERSIONS</span>
         </h2>
-        <p className="max-w-xl text-gray-500 text-2xl font-rajdhani mb-12 relative z-10">
+        <p className="max-w-xl text-gray-500 text-lg sm:text-2xl font-rajdhani mb-8 sm:mb-12 relative z-10">
           Get a professional explainer video that works as hard as you do.
         </p>
-        <button className="px-16 py-6 bg-brand-red text-white font-orbitron font-bold text-sm tracking-[0.3em] hover:bg-black transition-all rounded-full shadow-2xl relative z-10">
+        <button className="px-10 sm:px-16 py-4 sm:py-6 bg-brand-red text-white font-orbitron font-bold text-xs sm:text-sm tracking-[0.3em] hover:bg-black transition-all rounded-full shadow-2xl relative z-10">
           START A PROJECT
         </button>
       </section>
