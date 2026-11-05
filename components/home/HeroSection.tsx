@@ -98,13 +98,12 @@ const HeroSection = () => {
             <p className="text-[#EFE6D8] font-orbitron font-black text-3xl sm:text-5xl lg:text-6xl tracking-widest uppercase leading-none drop-shadow-[0_0_20px_rgba(242,193,78,0.2)]">TECHNOLOGY</p>
             <p className="text-[#EFE6D8] font-orbitron font-black text-sm lg:text-lg tracking-[0.1em] uppercase mt-2">TURNS YOU INTO A</p>
 
-            <div className="mt-4 mb-6 min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center overflow-visible">
+            <div className="mt-4 mb-6 min-h-[50px] sm:min-h-[70px] lg:min-h-[85px] flex items-center overflow-visible">
               <MorphText
                 words={["DEVELOPER", "ANIMATOR", "DESIGNER", "VISIONARY", "CREATOR"]}
                 interval={2600}
                 align="left"
-                fontSize="clamp(2.5rem, 5.5vw, 4.5rem)"
-                textClassName="text-[#F2C14E] font-orbitron font-black uppercase tracking-[0.05em] drop-shadow-[0_0_15px_rgba(242,193,78,0.4)] leading-none"
+                textClassName="text-[42px] sm:text-[58px] lg:text-[68px] text-[#F2C14E] font-orbitron font-black uppercase tracking-[0.05em] drop-shadow-[0_0_15px_rgba(242,193,78,0.4)] leading-none"
               />
             </div>
           </div>

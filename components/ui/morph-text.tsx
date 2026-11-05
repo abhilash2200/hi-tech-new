@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useId } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-
-// ─── Types ─────────────────────────────────────────────────────────────────
 
 export interface MorphTextProps {
   /**
    * Array of words / phrases to cycle through.
-   * @default ["CREATE", "DESIGN", "DEVELOP"]
+   * @default ["DEVELOPER", "ANIMATOR", "DESIGNER", "VISIONARY", "CREATOR"]
    */
   words?: string[];
   /**
    * Duration (ms) each word is displayed before transitioning.
-   * @default 3000
+   * @default 2800
    */
   interval?: number;
   /**
@@ -21,178 +20,95 @@ export interface MorphTextProps {
    */
   subtext?: string;
   /**
-   * Font size passed as a CSS value (e.g. "clamp(3rem, 15vw, 10rem)").
-   * Defaults to a fluid clamp that scales with the viewport.
-   */
-  fontSize?: string;
-  /**
-   * Font family. Defaults to inherit.
-   */
-  fontFamily?: string;
-  /**
-   * Text alignment: "left" | "center" | "right".
-   * @default "center"
+   * Alignment of the text: "left" | "center" | "right".
+   * @default "left"
    */
   align?: "left" | "center" | "right";
   /** Extra CSS classes on the root wrapper. */
   className?: string;
-  /** Extra CSS classes on the morphing text container. */
+  /** Extra CSS classes on the morphing text element. */
   textClassName?: string;
   /** Extra CSS classes on the subtext element. */
   subtextClassName?: string;
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────
-
 export function MorphText({
-  words = ["CREATE", "DESIGN", "DEVELOP"],
-  interval = 3000,
+  words = ["DEVELOPER", "ANIMATOR", "DESIGNER", "VISIONARY", "CREATOR"],
+  interval = 2800,
   subtext,
-  fontSize = "clamp(3rem, 15vw, 10rem)",
-  fontFamily = "inherit",
-  align = "center",
+  align = "left",
   className,
   textClassName,
   subtextClassName,
 }: MorphTextProps) {
-  // Unique ID so multiple instances don't share filter IDs
-  const uid = useId().replace(/:/g, "");
-  const filterId = `morph-threshold-${uid}`;
+  const [index, setIndex] = useState(0);
 
-  const totalDuration = (interval / 1000) * words.length; // seconds
-  const wordDuration = interval / 1000;
+  useEffect(() => {
+    if (!words || words.length <= 1) return;
 
-  // Build per-word keyframe + delay styles
-  const wordStyles = words.map((_, i) => ({
-    animationDelay: `${i * wordDuration}s`,
-    animationDuration: `${totalDuration}s`,
-  }));
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % words.length);
+    }, interval);
 
-  const alignStyles = {
-    "--morph-left": align === "left" ? "0%" : align === "right" ? "100%" : "50%",
-    "--morph-translate-x": align === "left" ? "0%" : align === "right" ? "-100%" : "-50%",
-  } as React.CSSProperties;
+    return () => clearInterval(timer);
+  }, [words, interval]);
+
+  const currentWord = words[index] || "";
 
   return (
     <div
       className={cn(
         "morph-text-root relative flex flex-col",
-        align === "left" ? "items-start" : align === "right" ? "items-end" : "items-center",
+        align === "left"
+          ? "items-start text-left"
+          : align === "right"
+          ? "items-end text-right"
+          : "items-center text-center",
         className
       )}
-      style={alignStyles}
     >
-      {/* ── Threshold SVG filter (hidden) ─────────────────────────── */}
-      <svg
-        aria-hidden="true"
-        focusable="false"
-        style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }}
-      >
-        <defs>
-          <filter id={filterId}>
-            <feColorMatrix
-              in="SourceGraphic"
-              type="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -9"
-              result="goo"
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-
-      {/* ── Morphing word container ────────────────────────────────── */}
-      <div
-        className={cn("morph-text-container relative select-none", textClassName)}
-        style={{
-          fontSize,
-          fontWeight: 700,
-          filter: `url(#${filterId})`,
-          fontFamily,
-        }}
-      >
-        {/* word rotator */}
-        <div
-          className={cn(
-            "morph-word-rotator relative flex items-center",
-            align === "left" ? "justify-start" : align === "right" ? "justify-end" : "justify-center"
-          )}
-          style={{ height: "1.2em", minWidth: "12ch" }}
-        >
-          {words.map((word, i) => (
-            <span
-              key={`${word}-${i}`}
-              className="morph-word absolute"
-              style={{
-                top: "50%",
-                left: "var(--morph-left, 50%)",
-                transform: "translate(var(--morph-translate-x, -50%), -50%)",
-                opacity: 0,
-                whiteSpace: "nowrap",
-                animationName: "morph-word-rotate",
-                animationTimingFunction: "ease-in-out",
-                animationIterationCount: "infinite",
-                animationFillMode: "both",
-                ...wordStyles[i],
-              }}
-            >
-              {word}
-            </span>
-          ))}
-        </div>
+      <div className="relative min-h-[1.15em] flex items-center overflow-visible">
+        {/* mode="wait" guarantees the exiting word finishes completely before the next mounts, preventing any overlapping */}
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={currentWord}
+            initial={{
+              opacity: 0,
+              y: 12,
+              filter: "blur(6px)",
+              scale: 0.97,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: -12,
+              filter: "blur(6px)",
+              scale: 1.03,
+            }}
+            transition={{
+              duration: 0.4,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className={cn(
+              "inline-block font-orbitron font-black uppercase whitespace-nowrap select-none",
+              textClassName
+            )}
+          >
+            {currentWord}
+          </motion.span>
+        </AnimatePresence>
       </div>
 
-      {/* ── Optional subtext ──────────────────────────────────────── */}
       {subtext && (
-        <p
-          className={cn(
-            "morph-subtext mt-8 uppercase tracking-[0.2em] text-[#888]",
-            subtextClassName
-          )}
-          style={{
-            fontSize: "1.2rem",
-            opacity: 0,
-            animation: "morph-fade-up 1s ease-out 1s forwards",
-            fontFamily,
-          }}
-        >
+        <p className={cn("mt-4 text-gray-400 font-rajdhani", subtextClassName)}>
           {subtext}
         </p>
       )}
-
-      {/* ── Scoped keyframes ──────────────────────────────────────── */}
-      <style>{`
-        @keyframes morph-word-rotate {
-          0% {
-            opacity: 0;
-            filter: blur(20px);
-            transform: translate(var(--morph-translate-x, -50%), -50%) scale(0.8);
-          }
-          5% {
-            opacity: 0.5;
-            filter: blur(10px);
-          }
-          15%, 35% {
-            opacity: 1;
-            filter: blur(0px);
-            transform: translate(var(--morph-translate-x, -50%), -50%) scale(1);
-          }
-          45% {
-            opacity: 0.5;
-            filter: blur(10px);
-          }
-          50%, 100% {
-            opacity: 0;
-            filter: blur(20px);
-            transform: translate(var(--morph-translate-x, -50%), -50%) scale(1.2);
-          }
-        }
-
-        @keyframes morph-fade-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }
