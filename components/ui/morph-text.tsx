@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 export interface MorphTextProps {
   /** Array of words to morph between */
   words?: string[];
-  /** Duration of the morphing transition in seconds (default: 1.0) */
+  /** Duration of the liquid morph transition in seconds (default: 1.1) */
   morphTime?: number;
-  /** Duration each word stays stationary and crisp in seconds (default: 2.0) */
+  /** Duration each word stays stationary and crisp in seconds (default: 2.2) */
   cooldownTime?: number;
   /** Extra CSS classes on the root container */
   className?: string;
@@ -18,8 +18,8 @@ export interface MorphTextProps {
 
 export function MorphText({
   words = ["DEVELOPER", "ANIMATOR", "DESIGNER", "VISIONARY", "CREATOR"],
-  morphTime = 1.0,
-  cooldownTime = 2.0,
+  morphTime = 1.1,
+  cooldownTime = 2.2,
   className,
   textClassName,
 }: MorphTextProps) {
@@ -30,99 +30,91 @@ export function MorphText({
   const text2Ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (!words || words.length === 0) return;
+    if (!words || words.length <= 1) return;
 
-    let textIndex = 0;
-    let time = performance.now();
-    let morph = 0;
-    let cooldown = cooldownTime;
+    let currentIndex = 0;
+    let nextIndex = 1;
+    let state: "cooldown" | "morphing" = "cooldown";
+    let elapsed = 0;
+    let lastTime = performance.now();
 
     const text1 = text1Ref.current;
     const text2 = text2Ref.current;
     if (!text1 || !text2) return;
 
-    text1.textContent = words[textIndex % words.length];
-    text2.textContent = words[(textIndex + 1) % words.length];
-    text1.style.filter = "";
+    // Initial state: text1 visible & sharp, text2 hidden
+    text1.textContent = words[currentIndex];
+    text2.textContent = words[nextIndex];
     text1.style.opacity = "1";
-    text2.style.filter = "";
+    text1.style.filter = "none";
     text2.style.opacity = "0";
+    text2.style.filter = "none";
 
-    let animationFrameId: number;
+    let animId: number;
 
-    const setMorph = (fraction: number) => {
-      // Dynamic blur curve: creates the authentic liquid morphing threshold
-      const blurFraction = Math.min(8 / fraction - 8, 100);
-      const blurFractionInv = Math.min(8 / (1 - fraction) - 8, 100);
+    const tick = (now: number) => {
+      animId = requestAnimationFrame(tick);
 
-      text2.style.filter = `blur(${Math.max(0, blurFraction)}px)`;
-      text2.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+      // Clamp delta time to avoid large jumps when returning from inactive tabs
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      elapsed += dt;
 
-      text1.style.filter = `blur(${Math.max(0, blurFractionInv)}px)`;
-      text1.style.opacity = `${Math.pow(1 - fraction, 0.4) * 100}%`;
+      if (state === "cooldown") {
+        if (elapsed >= cooldownTime) {
+          state = "morphing";
+          elapsed = 0;
+          text2.textContent = words[nextIndex];
+        }
+      } else if (state === "morphing") {
+        const rawProgress = Math.min(1, elapsed / morphTime);
+        // Smooth sine ease-in-out curve for natural liquid velocity
+        const progress = 0.5 - 0.5 * Math.cos(rawProgress * Math.PI);
 
-      text1.textContent = words[textIndex % words.length];
-      text2.textContent = words[(textIndex + 1) % words.length];
-    };
+        // Controlled blur range keeps letterforms legible while creating gooey threshold
+        const maxBlur = 12;
+        const text1Blur = progress * maxBlur;
+        const text2Blur = (1 - progress) * maxBlur;
 
-    const doCooldown = () => {
-      morph = 0;
-      // During cooldown, clear all blur filters so the Orbitron font stays 100% crisp & razor-sharp
-      text2.style.filter = "";
-      text2.style.opacity = "0%";
-      text1.style.filter = "";
-      text1.style.opacity = "100%";
-      text1.textContent = words[textIndex % words.length];
-      text2.textContent = words[(textIndex + 1) % words.length];
-    };
+        text1.style.filter = `blur(${text1Blur.toFixed(2)}px)`;
+        text1.style.opacity = `${(1 - progress).toFixed(3)}`;
 
-    const doMorph = () => {
-      morph -= cooldown;
-      cooldown = 0;
+        text2.style.filter = `blur(${text2Blur.toFixed(2)}px)`;
+        text2.style.opacity = `${progress.toFixed(3)}`;
 
-      let fraction = morph / morphTime;
+        if (rawProgress >= 1) {
+          // Seamless handoff:
+          // text1 adopts text2's exact content and styles at 100% opacity with 0 blur.
+          // Because both look identical, this handoff is 100% invisible with zero cut or jump.
+          currentIndex = nextIndex;
+          nextIndex = (nextIndex + 1) % words.length;
 
-      if (fraction >= 1) {
-        cooldown = cooldownTime;
-        fraction = 1;
-      }
+          text1.textContent = words[currentIndex];
+          text1.style.opacity = "1";
+          text1.style.filter = "none";
 
-      setMorph(fraction);
+          text2.textContent = words[nextIndex];
+          text2.style.opacity = "0";
+          text2.style.filter = "none";
 
-      if (fraction === 1) {
-        textIndex = (textIndex + 1) % words.length;
-      }
-    };
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-
-      const now = performance.now();
-      const dt = (now - time) / 1000;
-      time = now;
-
-      cooldown -= dt;
-
-      if (cooldown <= 0) {
-        doMorph();
-      } else {
-        doCooldown();
+          state = "cooldown";
+          elapsed = 0;
+        }
       }
     };
 
-    animationFrameId = requestAnimationFrame(animate);
+    animId = requestAnimationFrame(tick);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
     };
   }, [words, morphTime, cooldownTime]);
 
-  // Find longest word to provide layout stability
   const longestWord = words.reduce((a, b) => (a.length > b.length ? a : b), words[0] || "");
 
   return (
     <div className={cn("relative flex items-center select-none overflow-visible", className)}>
-      {/* Morphing container with SVG threshold filter for the authentic liquid morph effect */}
+      {/* Liquid morph container with SVG contrast threshold */}
       <div
         className="relative flex items-center overflow-visible"
         style={{ filter: `url(#${filterId})` }}
@@ -141,7 +133,7 @@ export function MorphText({
             textClassName
           )}
         />
-        {/* Invisible spacer prevents layout shifts while words morph */}
+        {/* Invisible spacer prevents layout shifts across different word lengths */}
         <span
           aria-hidden="true"
           className={cn(
