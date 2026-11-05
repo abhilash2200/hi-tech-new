@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React, { useState } from "react";
 import Image from "next/image";
+import MorphText from "@/components/ui/morph-text";
 
 const backgroundFigures = [
   "/assets/home/figure/1.png",
@@ -73,47 +72,6 @@ const sections = [
 
 const HeroSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const textRef = useRef<HTMLHeadingElement>(null);
-
-  useGSAP(() => {
-    if (!textRef.current) return;
-
-    const words = ["DEVELOPER", "ANIMATOR", "DESIGNER", "VISIONARY", "CREATOR"];
-    let wordIndex = 0;
-
-    const scramble = () => {
-      if (!textRef.current) return;
-      const nextWord = words[(wordIndex + 1) % words.length];
-      const currentWord = textRef.current.innerText || "";
-      const maxLength = Math.max(currentWord.length, nextWord.length);
-
-      const obj = { val: 0 };
-      gsap.to(obj, {
-        val: 1,
-        duration: 1.2,
-        ease: "none",
-        onUpdate: () => {
-          if (!textRef.current) return;
-          let newText = "";
-          const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
-          for (let i = 0; i < maxLength; i++) {
-            if (obj.val > i / maxLength) {
-              newText += nextWord[i] || "";
-            } else {
-              newText += chars[Math.floor(Math.random() * chars.length)];
-            }
-          }
-          textRef.current.innerText = newText;
-        },
-        onComplete: () => {
-          wordIndex = (wordIndex + 1) % words.length;
-          gsap.delayedCall(2.5, scramble);
-        }
-      });
-    };
-
-    gsap.delayedCall(2, scramble);
-  });
 
   return (
     <>
@@ -140,13 +98,14 @@ const HeroSection = () => {
             <p className="text-[#EFE6D8] font-orbitron font-black text-3xl sm:text-5xl lg:text-6xl tracking-widest uppercase leading-none drop-shadow-[0_0_20px_rgba(242,193,78,0.2)]">TECHNOLOGY</p>
             <p className="text-[#EFE6D8] font-orbitron font-black text-sm lg:text-lg tracking-[0.1em] uppercase mt-2">TURNS YOU INTO A</p>
 
-            <div className="mt-4 mb-6 min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center">
-              <h2
-                ref={textRef}
-                className="font-orbitron font-black text-[45px] sm:text-[60px] lg:text-[70px] uppercase tracking-[0.05em] text-[#F2C14E] drop-shadow-[0_0_15px_rgba(242,193,78,0.4)] m-0 leading-none"
-              >
-                DEVELOPER
-              </h2>
+            <div className="mt-4 mb-6 min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center overflow-visible">
+              <MorphText
+                words={["DEVELOPER", "ANIMATOR", "DESIGNER", "VISIONARY", "CREATOR"]}
+                interval={2600}
+                align="left"
+                fontSize="clamp(2.5rem, 5.5vw, 4.5rem)"
+                textClassName="text-[#F2C14E] font-orbitron font-black uppercase tracking-[0.05em] drop-shadow-[0_0_15px_rgba(242,193,78,0.4)] leading-none"
+              />
             </div>
           </div>
 
