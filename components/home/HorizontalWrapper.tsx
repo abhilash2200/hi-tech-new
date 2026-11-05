@@ -15,205 +15,158 @@ interface HorizontalWrapperProps {
   children: React.ReactNode;
 }
 
+interface GeometryData {
+  totalWidth: number;
+  scrollDistance: number;
+  snapProgresses: number[];
+}
+
 const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
-    (context) => {
-      let lenisInstance: Lenis | null = null;
-      let updateRaf: ((time: number) => void) | null = null;
-      let wheelHandler: ((e: WheelEvent) => void) | null = null;
-      let touchStartHandler: ((e: TouchEvent) => void) | null = null;
-      let touchMoveHandler: ((e: TouchEvent) => void) | null = null;
-      let scrollSyncHandler: (() => void) | null = null;
-
-      // Force scroll reset immediately to ensure no scroll state leaks during React render
+    () => {
+      // Always reset scroll to top on mount / route transition
       window.scrollTo(0, 0);
-      ScrollTrigger.update();
+      ScrollTrigger.clearScrollMemory();
 
-      // Ensure all images/content are loaded for accurate measurement
-      const timer = setTimeout(() => {
-        // Double check scroll is at 0 before creating ScrollTrigger pins
-        window.scrollTo(0, 0);
-        ScrollTrigger.update();
-        ScrollTrigger.clearScrollMemory();
-        
+      const mm = gsap.matchMedia();
+
+      // Desktop: Pin and horizontal scrub (≥ 1024px)
+      mm.add("(min-width: 1024px)", () => {
         const wrapper = wrapperRef.current;
-        if (!wrapper) return;
+        const container = containerRef.current;
+        if (!wrapper || !container) return;
 
-        const sections = gsap.utils.toArray(".horizontal-section");
-        if (sections.length === 0) return;
+        const calculateGeometry = (): GeometryData => {
+          const totalWidth = wrapper.scrollWidth;
+          const scrollDistance = Math.max(0, totalWidth - window.innerWidth);
+          const sections = gsap.utils.toArray<HTMLElement>(".horizontal-section");
 
-        // Use context.add() so that GSAP registers asynchronous animations under this hook's context
-        context.add(() => {
-          // Initialize GSAP matchMedia
-          const mm = gsap.matchMedia();
+          const snapProgresses =
+            scrollDistance > 0
+              ? sections.map((sec) =>
+                  Math.min(1, Math.max(0, sec.offsetLeft / scrollDistance))
+                )
+              : [0];
 
-          // 1024px and wider get the premium horizontal-scroll and pinning experience
-          mm.add("(min-width: 1024px)", () => {
-            const totalWidth = wrapper.scrollWidth;
-            const scrollDistance = totalWidth - window.innerWidth;
+          return { totalWidth, scrollDistance, snapProgresses };
+        };
 
-            // Initialize Lenis smooth scroll
-            const lenis = new Lenis({
-              duration: 1.2,
-              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
-              orientation: "vertical",
-              gestureOrientation: "vertical",
-              smoothWheel: true,
-            });
-            lenisInstance = lenis;
+        let geometry = calculateGeometry();
 
-            // Update ScrollTrigger on scroll
-            lenis.on("scroll", ScrollTrigger.update);
-
-            // Add Lenis update to GSAP ticker
-            updateRaf = (time: number) => {
-              lenis.raf(time * 1000);
-            };
-            gsap.ticker.add(updateRaf);
-
-            // 1. Horizontal Scroll Animation
-            gsap.to(wrapper, {
-              x: -scrollDistance,
-              ease: "none",
-              scrollTrigger: {
-                trigger: containerRef.current,
-                pin: true,
-                scrub: 1,
-                end: () => "+=" + scrollDistance,
-                invalidateOnRefresh: true,
-                anticipatePin: 1,
-              },
-            });
-
-            // 2. Premium Section Snapping Observer
-            const currentIndexRef = { current: 0 };
-            const isAnimatingRef = { current: false };
-
-            const goToSection = (index: number) => {
-              const targetIndex = Math.max(0, Math.min(sections.length - 1, index));
-              currentIndexRef.current = targetIndex;
-              isAnimatingRef.current = true;
-
-              const section = sections[targetIndex] as HTMLElement;
-              // Cap targetScrollY at maximum scrollable distance to prevent browser boundary hanging
-              const targetScrollY = Math.min(scrollDistance, section.offsetLeft);
-
-              // Animate scrolling using Lenis scrollTo
-              lenis.scrollTo(targetScrollY, {
-                duration: 0.95,
-                immediate: false,
-                onComplete: () => {
-                  // Cooldown to absorb trackpad inertial momentum events
-                  setTimeout(() => {
-                    isAnimatingRef.current = false;
-                  }, 150);
-                },
-              });
-            };
-
-            wheelHandler = (e: WheelEvent) => {
-              e.preventDefault();
-              if (isAnimatingRef.current) return;
-
-              const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-              if (Math.abs(delta) < 8) return; // filter minor inputs
-
-              const targetIndex = delta > 0 
-                ? currentIndexRef.current + 1 
-                : currentIndexRef.current - 1;
-
-              if (targetIndex >= 0 && targetIndex < sections.length) {
-                goToSection(targetIndex);
-              }
-            };
-
-            let touchStartX = 0;
-            let touchStartY = 0;
-            touchStartHandler = (e: TouchEvent) => {
-              touchStartX = e.touches[0].clientX;
-              touchStartY = e.touches[0].clientY;
-            };
-
-            touchMoveHandler = (e: TouchEvent) => {
-              if (isAnimatingRef.current) {
-                e.preventDefault();
-                return;
-              }
-
-              const touchEndX = e.touches[0].clientX;
-              const touchEndY = e.touches[0].clientY;
-
-              const diffX = touchStartX - touchEndX;
-              const diffY = touchStartY - touchEndY;
-
-              const maxDiff = Math.abs(diffY) > Math.abs(diffX) ? diffY : diffX;
-
-              if (Math.abs(maxDiff) > 50) {
-                const targetIndex = maxDiff > 0 
-                  ? currentIndexRef.current + 1 
-                  : currentIndexRef.current - 1;
-
-                if (targetIndex >= 0 && targetIndex < sections.length) {
-                  e.preventDefault();
-                  goToSection(targetIndex);
-                }
-              }
-            };
-
-            scrollSyncHandler = () => {
-              if (isAnimatingRef.current) return;
-              const currentScroll = window.scrollY;
-
-              let closestIndex = 0;
-              let minDiff = Infinity;
-
-              sections.forEach((sec, idx) => {
-                const section = sec as HTMLElement;
-                // Align sync with capped targetScrollY boundary limits
-                const targetPos = Math.min(scrollDistance, section.offsetLeft);
-                const diff = Math.abs(targetPos - currentScroll);
-                if (diff < minDiff) {
-                  minDiff = diff;
-                  closestIndex = idx;
-                }
-              });
-              currentIndexRef.current = closestIndex;
-            };
-
-            // Attach listeners
-            window.addEventListener("wheel", wheelHandler, { passive: false });
-            window.addEventListener("touchstart", touchStartHandler);
-            window.addEventListener("touchmove", touchMoveHandler, { passive: false });
-            window.addEventListener("scroll", scrollSyncHandler);
-          });
+        // 1. Initialize Lenis for smooth vertical scroll physics
+        const lenis = new Lenis({
+          duration: 1.15,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          orientation: "vertical",
+          gestureOrientation: "vertical",
+          smoothWheel: true,
         });
 
-        // Trigger initial refresh
-        setTimeout(() => ScrollTrigger.refresh(), 300);
-      }, 200);
+        lenis.on("scroll", ScrollTrigger.update);
+
+        // 2. Synchronize Lenis and GSAP via a single unified requestAnimationFrame ticker
+        const updateRaf = (time: number) => {
+          lenis.raf(time * 1000);
+        };
+        gsap.ticker.add(updateRaf);
+        gsap.ticker.lagSmoothing(0);
+
+        // 3. Cache geometry on resize — NO reading offsetLeft inside scroll loops
+        let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+        const resizeObserver = new ResizeObserver(() => {
+          if (resizeTimer) clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            geometry = calculateGeometry();
+            ScrollTrigger.refresh();
+          }, 100);
+        });
+        resizeObserver.observe(wrapper);
+
+        // 4. GSAP horizontal scroll tween with magnetic snapping
+        const tween = gsap.to(wrapper, {
+          x: () => -geometry.scrollDistance,
+          ease: "none",
+          scrollTrigger: {
+            trigger: container,
+            pin: true,
+            scrub: 1.1,
+            start: "top top",
+            end: () => `+=${geometry.scrollDistance}`,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+            snap: {
+              snapTo: (progress: number) => {
+                if (!geometry.snapProgresses.length) return progress;
+                let closest = geometry.snapProgresses[0];
+                let minDiff = Math.abs(progress - closest);
+                for (let i = 1; i < geometry.snapProgresses.length; i++) {
+                  const diff = Math.abs(progress - geometry.snapProgresses[i]);
+                  if (diff < minDiff) {
+                    minDiff = diff;
+                    closest = geometry.snapProgresses[i];
+                  }
+                }
+                return closest;
+              },
+              duration: { min: 0.2, max: 0.5 },
+              delay: 0.08,
+              ease: "power2.out",
+            },
+          },
+        });
+
+        // Trigger initial refresh once DOM is fully painted
+        const refreshTimer = setTimeout(() => {
+          geometry = calculateGeometry();
+          ScrollTrigger.refresh();
+        }, 150);
+
+        return () => {
+          if (resizeTimer) clearTimeout(resizeTimer);
+          clearTimeout(refreshTimer);
+          resizeObserver.disconnect();
+          gsap.ticker.remove(updateRaf);
+          lenis.destroy();
+          tween.kill();
+        };
+      });
+
+      // Mobile / Tablet: Smooth vertical flow (< 1024px)
+      mm.add("(max-width: 1023px)", () => {
+        const lenis = new Lenis({
+          duration: 0.9,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          orientation: "vertical",
+          smoothWheel: true,
+        });
+
+        const updateRaf = (time: number) => {
+          lenis.raf(time * 1000);
+        };
+        gsap.ticker.add(updateRaf);
+
+        return () => {
+          gsap.ticker.remove(updateRaf);
+          lenis.destroy();
+        };
+      });
 
       return () => {
-        clearTimeout(timer);
-        if (wheelHandler) window.removeEventListener("wheel", wheelHandler);
-        if (touchStartHandler) window.removeEventListener("touchstart", touchStartHandler);
-        if (touchMoveHandler) window.removeEventListener("touchmove", touchMoveHandler);
-        if (scrollSyncHandler) window.removeEventListener("scroll", scrollSyncHandler);
-        if (updateRaf) gsap.ticker.remove(updateRaf);
-        if (lenisInstance) lenisInstance.destroy();
+        mm.revert();
       };
     },
-    { scope: containerRef, dependencies: [pathname, children] }
+    { scope: containerRef, dependencies: [pathname] }
   );
 
   return (
     <div ref={containerRef} className="lg:overflow-hidden min-h-screen w-full bg-white">
-      <div 
-        ref={wrapperRef} 
-        className="flex flex-col lg:flex-row lg:flex-nowrap w-full lg:w-fit h-auto lg:h-screen overflow-visible"
+      <div
+        ref={wrapperRef}
+        className="flex flex-col lg:flex-row lg:flex-nowrap w-full lg:w-fit h-auto lg:h-screen overflow-visible will-change-transform"
       >
         {children}
       </div>

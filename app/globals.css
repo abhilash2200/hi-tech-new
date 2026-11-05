@@ -90,4 +90,13 @@
     position: relative;
     z-index: 10;
   }
+
+  /* High-Performance Studio Dual-Axis Containment */
+  @media (min-width: 1024px) {
+    .horizontal-section {
+      contain: layout paint style;
+      content-visibility: auto;
+      contain-intrinsic-size: 100vw 100vh;
+    }
+  }
 }
