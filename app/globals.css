@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --font-orbitron: var(--font-orbitron);
+  --font-rajdhani: var(--font-rajdhani);
+  --font-michroma: var(--font-michroma);
+
+  --color-brand-red: #a61d20;
+  --color-brand-red-light: #fbecec;
+  --color-brand-dark: #1a1a1a;
+}
+
+@layer base {
+
+  body {
+    @apply bg-white text-black antialiased overflow-x-hidden;
+    font-family: var(--font-rajdhani), sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-orbitron uppercase tracking-widest;
+  }
+}
+
+@layer utilities {
+  .text-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .text-outline {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+    color: transparent;
+  }
+
+  .text-outline-dark {
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.1);
+    color: transparent;
+  }
+
+  @keyframes spin-gradient {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .animate-border-beam {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animate-border-beam::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 250%;
+    height: 250%;
+    background: conic-gradient(
+      from 0deg,
+      #d946ef, /* fuchsia-500 */
+      transparent,
+      #06b6d4, /* cyan-500 */
+      transparent,
+      #d946ef  /* fuchsia-500 */
+    );
+    animation: spin-gradient 6s linear infinite;
+    transform-origin: center center;
+    z-index: 0;
+  }
+
+  .animate-border-beam > * {
+    position: relative;
+    z-index: 10;
+  }
+}
