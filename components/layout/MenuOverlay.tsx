@@ -93,10 +93,13 @@ const MenuOverlay = ({ isOpen, onClose }: MenuOverlayProps) => {
           <div className="lg:col-span-4 flex flex-col justify-between">
             <div className="mb-6 lg:mb-0">
               <div className="flex items-center gap-1.5 font-orbitron font-black text-lg lg:text-xl tracking-[0.25em] text-white mb-4">
-                <span className="text-[#51EDB2] flex gap-0.5 animate-pulse">
-                  <span>•</span><span>•</span><span>•</span>
-                </span>
-                <span>HI-TECH</span>
+                <div className="relative h-12 lg:h-16 w-auto min-w-[150px] lg:min-w-[200px] transition-all duration-300">
+            <img
+              src="/assets/logo.png"
+              alt="Hi-Tech Animation Logo"
+              className="h-full w-auto object-contain"
+            />
+          </div>
               </div>
               <p className="font-rajdhani text-xs text-white/50 uppercase tracking-wider mb-8 max-w-xs leading-relaxed font-semibold">
                 We strive to inspire the world to create and experience premium visual content on an unprecedented scale.
