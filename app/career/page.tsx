@@ -116,6 +116,69 @@ const jobs = [
   }
 ];
 
+const renderCardIllustration = (category: string, index: number) => {
+  const key = (category || "").toLowerCase();
+
+  if (key.includes("vfx") || index % 3 === 1) {
+    return (
+      <div className="relative w-32 h-32 flex items-center justify-center">
+        <svg
+          viewBox="0 0 40 40"
+          className="absolute -top-8 -left-4 w-10 h-10 drop-shadow-[0_6px_12px_rgba(56,189,248,0.45)] transition-transform duration-500 group-hover:rotate-45 group-hover:scale-110"
+        >
+          <defs>
+            <linearGradient id="sparkleGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#7DD3FC" />
+              <stop offset="100%" stopColor="#0284C7" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M20 2 C21.5 14, 26 18.5, 38 20 C26 21.5, 21.5 26, 20 38 C18.5 26, 14 21.5, 2 20 C14 18.5, 18.5 14, 20 2 Z"
+            fill="url(#sparkleGrad)"
+          />
+        </svg>
+
+        <div className="relative w-24 h-24 rounded-2xl rotate-[18deg] bg-gradient-to-br from-white/75 via-cyan-200/40 to-purple-300/60 border-2 border-white/90 backdrop-blur-md shadow-[0_18px_30px_rgba(31,38,135,0.18),inset_0_0_16px_rgba(255,255,255,0.85)] transition-transform duration-500 group-hover:rotate-[26deg] group-hover:scale-105">
+          <div className="absolute inset-2.5 rounded-xl border border-white/70 bg-gradient-to-tr from-emerald-200/30 via-transparent to-indigo-300/40" />
+        </div>
+      </div>
+    );
+  }
+
+  if (key.includes("design") || index % 3 === 2) {
+    return (
+      <svg
+        viewBox="0 0 140 140"
+        className="w-32 h-32 drop-shadow-[0_18px_22px_rgba(25,20,35,0.22)] transition-transform duration-500 group-hover:-translate-y-2 group-hover:rotate-6"
+      >
+        <g transform="rotate(32 70 70)">
+          <path d="M26 52 Q70 28 114 52" stroke="#D97706" strokeWidth="3.5" fill="none" />
+          <circle cx="26" cy="52" r="5" fill="#FBBF24" />
+          <circle cx="114" cy="52" r="5" fill="#FBBF24" />
+          <path d="M70 18 L100 84 L40 84 Z" fill="#D1D5DB" stroke="#FFFFFF" strokeWidth="1.5" />
+          <line x1="70" y1="18" x2="70" y2="62" stroke="#4B5563" strokeWidth="2.5" />
+          <circle cx="70" cy="64" r="6" fill="#4B5563" />
+        </g>
+      </svg>
+    );
+  }
+
+  return (
+    <div className="relative w-32 h-32 flex items-center justify-center">
+      <svg
+        viewBox="0 0 140 140"
+        className="w-28 h-28 drop-shadow-[0_18px_22px_rgba(25,20,35,0.28)] transition-transform duration-500 group-hover:-translate-y-2 group-hover:-rotate-3"
+      >
+        <g transform="rotate(-12 70 70)">
+          <rect x="22" y="30" width="96" height="16" rx="4" fill="#1F242D" />
+          <rect x="22" y="60" width="96" height="58" rx="10" fill="#1E222B" />
+          <path d="M63 78 L83 89 L63 100 Z" fill="#F9FAFB" />
+        </g>
+      </svg>
+    </div>
+  );
+};
+
 const CareerPage = () => {
   // GSAP Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -169,8 +232,8 @@ const CareerPage = () => {
       selectedFeatured === "ALL"
         ? true
         : selectedFeatured === "FEATURED"
-        ? job.isFeatured
-        : job.category.toUpperCase() === selectedFeatured.toUpperCase();
+          ? job.isFeatured
+          : job.category.toUpperCase() === selectedFeatured.toUpperCase();
 
     const matchType =
       selectedType === "ALL"
@@ -191,47 +254,65 @@ const CareerPage = () => {
   });
 
   // Horizontal Scroll Animation using GSAP
+    // Horizontal Scroll Animation using GSAP
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
+
       mm.add("(min-width: 1024px)", () => {
         const cardsContainer = cardsContainerRef.current;
+
         if (!cardsContainer) return;
 
-        const totalScrollWidth = cardsContainer.scrollWidth;
-        const visibleWidth = cardsContainer.parentElement?.offsetWidth || window.innerWidth * 0.6;
-        const scrollDistance = totalScrollWidth - visibleWidth;
+        const parent = cardsContainer.parentElement;
+        if (!parent) return;
 
-        if (scrollDistance <= 0) {
-          gsap.set(cardsContainer, { x: 0 });
-          return;
-        }
+        // Calculate actual horizontal overflow
+        const totalWidth = cardsContainer.scrollWidth;
+        const visibleWidth = parent.clientWidth;
+        const scrollDistance = Math.max(0, totalWidth - visibleWidth);
 
-        const anim = gsap.to(cardsContainer, {
+        // Always start from the first card
+        gsap.set(cardsContainer, { x: 0 });
+
+        if (scrollDistance === 0) return;
+
+        const animation = gsap.to(cardsContainer, {
           x: -scrollDistance,
           ease: "none",
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top",
-            end: () => `+=${scrollDistance * 1.3}`, // control scroll sensitivity
+            end: () => `+=${scrollDistance}`,
             pin: true,
             scrub: 1,
             invalidateOnRefresh: true,
+            anticipatePin: 1,
           },
         });
 
         return () => {
-          anim.kill();
+          animation.kill();
         };
       });
+
+      return () => mm.revert();
     },
-    { scope: containerRef, dependencies: [selectedFeatured, selectedType, selectedLocation, selectedExperience] }
+    {
+      scope: containerRef,
+      dependencies: [
+        selectedFeatured,
+        selectedType,
+        selectedLocation,
+        selectedExperience,
+      ],
+    }
   );
 
   return (
     <div ref={containerRef} className="relative min-h-screen bg-[#FAF9F6] text-black font-rajdhani overflow-x-hidden">
       <div className="flex flex-col lg:flex-row min-h-screen w-full">
-        
+
         {/* LEFT COLUMN: FIXED HERO PANEL */}
         <div className="w-full lg:w-[40vw] lg:sticky lg:left-0 lg:top-0 lg:h-screen bg-[#0B0A0F] text-white flex flex-col justify-between p-8 md:p-12 xl:p-16 z-30 overflow-hidden select-none border-b lg:border-b-0 lg:border-r border-white/5">
           {/* Background Ambient Glow */}
@@ -246,8 +327,8 @@ const CareerPage = () => {
               </span>
               <span>HI-TECH</span>
             </div>
-            <a 
-              href="mailto:jobs@hitech.com" 
+            <a
+              href="mailto:jobs@hitech.com"
               className="text-xs md:text-sm font-semibold tracking-widest text-[#51EDB2] hover:text-white transition-colors uppercase border-b border-[#51EDB2]/20 hover:border-white py-0.5"
             >
               jobs@hitech.com
@@ -293,7 +374,7 @@ const CareerPage = () => {
 
             {/* Circular APPLY NOW badge */}
             <div className="absolute right-0 bottom-2 lg:-right-4 z-20">
-              <button 
+              <button
                 onClick={() => {
                   const el = document.getElementById("jobs-section");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -306,11 +387,11 @@ const CareerPage = () => {
                   <span className="text-[9px] font-bold tracking-[0.3em] uppercase [writing-mode:vertical-lr] rotate-180">
                     APPLY NOW
                   </span>
-                  <svg 
-                    className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 rotate-45 transition-transform duration-300" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 rotate-45 transition-transform duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                     strokeWidth={2.5}
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -323,7 +404,7 @@ const CareerPage = () => {
 
         {/* RIGHT COLUMN: SCROLLABLE LIST OF CARDS */}
         <div className="w-full lg:w-[60vw] min-h-screen flex flex-col justify-between pt-24 pb-12 lg:py-16 px-6 md:px-12 xl:px-16 shrink-0 bg-[#FAF9F6]">
-          
+
           {/* Top Filters Block */}
           <div id="jobs-section" className="mb-6 lg:mb-10 relative z-40">
             <span className="text-[10px] font-bold tracking-[0.25em] text-zinc-400 uppercase block mb-3">
@@ -332,7 +413,7 @@ const CareerPage = () => {
 
             {/* Custom Dropdown Filters Row */}
             <div className="flex flex-wrap gap-4 items-center">
-              
+
               {/* Category / Featured Dropdown */}
               <div className="relative min-w-[170px] sm:min-w-[190px]">
                 <button
@@ -342,11 +423,10 @@ const CareerPage = () => {
                     setLocationOpen(false);
                     setExperienceOpen(false);
                   }}
-                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${
-                    selectedFeatured !== "ALL"
+                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${selectedFeatured !== "ALL"
                       ? "bg-black text-white border-black"
                       : "bg-white text-black border-black/15 hover:border-black"
-                  }`}
+                    }`}
                 >
                   <span>{selectedFeatured === "ALL" ? "FEATURED" : selectedFeatured}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${featuredOpen ? "rotate-180" : ""}`} />
@@ -379,11 +459,10 @@ const CareerPage = () => {
                     setLocationOpen(false);
                     setExperienceOpen(false);
                   }}
-                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${
-                    selectedType !== "ALL"
+                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${selectedType !== "ALL"
                       ? "bg-black text-white border-black"
                       : "bg-white text-black border-black/15 hover:border-black"
-                  }`}
+                    }`}
                 >
                   <span>{selectedType === "ALL" ? "SELECT JOB TYPE" : selectedType}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${typeOpen ? "rotate-180" : ""}`} />
@@ -416,11 +495,10 @@ const CareerPage = () => {
                     setTypeOpen(false);
                     setExperienceOpen(false);
                   }}
-                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${
-                    selectedLocation !== "ALL"
+                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${selectedLocation !== "ALL"
                       ? "bg-black text-white border-black"
                       : "bg-white text-black border-black/15 hover:border-black"
-                  }`}
+                    }`}
                 >
                   <span>{selectedLocation === "ALL" ? "SELECT JOB LOCATION" : selectedLocation}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${locationOpen ? "rotate-180" : ""}`} />
@@ -453,11 +531,10 @@ const CareerPage = () => {
                     setTypeOpen(false);
                     setLocationOpen(false);
                   }}
-                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${
-                    selectedExperience !== "ALL"
+                  className={`w-full px-5 py-3.5 flex justify-between items-center transition-all border text-xs font-bold tracking-widest uppercase cursor-pointer ${selectedExperience !== "ALL"
                       ? "bg-black text-white border-black"
                       : "bg-white text-black border-black/15 hover:border-black"
-                  }`}
+                    }`}
                 >
                   <span>{selectedExperience === "ALL" ? "SELECT EXPERIENCE" : selectedExperience}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${experienceOpen ? "rotate-180" : ""}`} />
@@ -499,65 +576,156 @@ const CareerPage = () => {
           </div>
 
           {/* Horizontal/Vertical Scrollable Cards Container */}
-          <div className="flex-grow flex items-center overflow-x-auto lg:overflow-x-visible pb-6 lg:pb-0 select-none">
-            
+          <div className="w-full flex flex-col lg:flex-row items-start justify-start gap-6 py-10 px-4 overflow-hidden">
+
             {filteredJobs.length > 0 ? (
-              <div 
+              <div
                 ref={cardsContainerRef}
-                className="flex flex-col lg:flex-row gap-6 w-full lg:w-fit py-4 shrink-0"
+                className="flex flex-col lg:flex-row items-stretch gap-6 w-full lg:w-max py-4 shrink-0"
               >
-                {filteredJobs.map((job) => (
-                  <div
-                    key={job.id}
-                    className={`flex flex-col justify-between border border-black/15 rounded-3xl p-6 md:p-8 ${job.color} w-full lg:w-[32vw] lg:min-w-[420px] lg:h-[500px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_15px_35px_rgba(0,0,0,0.06)] relative overflow-hidden group shrink-0`}
-                  >
-                    {/* Abstract design geometry */}
-                    <div className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
-                    
-                    {/* Top Content */}
-                    <div>
-                      <div className="flex justify-between items-start gap-4 mb-5">
-                        <h3 className="font-orbitron text-2xl md:text-3xl font-black tracking-tight leading-none text-black uppercase max-w-[85%]">
-                          {job.title}
-                        </h3>
-                        {job.isFeatured && (
-                          <span className="bg-black text-white text-[9px] font-bold tracking-[0.2em] px-2.5 py-1 uppercase rounded-full shrink-0 select-none">
-                            Featured
-                          </span>
-                        )}
-                      </div>
-                      
-                      <p className="font-rajdhani text-sm md:text-base text-zinc-800 font-semibold leading-relaxed tracking-wider mb-8 uppercase">
-                        {job.desc}
-                      </p>
-                    </div>
 
-                    {/* Bottom Action Section */}
-                    <div>
-                      <button
-                        onClick={() => setActiveJob(job)}
-                        className="px-6 py-2.5 bg-black text-white text-xs font-bold tracking-widest uppercase font-orbitron hover:bg-zinc-800 transition-colors shadow-sm self-start inline-block mb-6 cursor-pointer"
-                      >
-                        Details
-                      </button>
+                {filteredJobs.map((job, index) => {
+  // Fallback pastel themes if job.color isn't updated yet
+  const pastelThemes = [
+    {
+      bg: "bg-gradient-to-br from-[#DFD3FF] via-[#D6C7FF] to-[#C8B5FF]",
+      pill: "bg-white/75 text-[#181822]",
+      dot: "bg-[#2E1065]",
+      wave1: "bg-white/25",
+      wave2: "bg-[#B79EFF]/35",
+    },
+    {
+      bg: "bg-gradient-to-br from-[#DFF7E6] via-[#CCF0D8] to-[#B5E6C7]",
+      pill: "bg-[#BCE8CC]/85 text-[#132A1C]",
+      dot: "bg-[#14532D]",
+      wave1: "bg-white/35",
+      wave2: "bg-[#8CD4A7]/35",
+    },
+    {
+      bg: "bg-gradient-to-br from-[#FFE0D6] via-[#FDD0C3] to-[#F9BCAE]",
+      pill: "bg-[#F8B8A8]/75 text-[#2D1510]",
+      dot: "bg-[#9A3412]",
+      wave1: "bg-white/30",
+      wave2: "bg-[#F39C87]/35",
+    },
+  ];
+  const theme = pastelThemes[index % pastelThemes.length];
 
-                      <div className="flex flex-wrap gap-x-5 gap-y-2 text-black/60 text-[10px] md:text-xs font-bold tracking-[0.15em] uppercase pt-5 border-t border-black/10">
-                        <span className="flex items-center gap-1.5">
-                          <Briefcase className="w-3.5 h-3.5 text-black" />
-                          {job.type}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5 text-black" />
-                          {job.location}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-black" />
-                          {job.experience}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+  return (
+    <div
+      key={job.id}
+      className={`
+        relative flex flex-col justify-between
+        w-full max-w-[420px] lg:w-[395px] lg:max-w-none
+        min-h-[500px] sm:min-h-[520px] lg:min-h-[540px] h-auto
+        shrink-0 select-none
+        rounded-[28px] border border-white/70
+        p-6 sm:p-7 md:p-8
+        ${job.color || theme.bg}
+        shadow-[0_22px_45px_-12px_rgba(32,24,56,0.14)]
+        hover:shadow-[0_34px_65px_-12px_rgba(32,24,56,0.24)]
+        group cursor-pointer
+      `}
+      style={{
+        transformStyle: "preserve-3d",
+      }}
+    >
+      {/* Clipped Organic Swooping Wave Shapes */}
+      <div className="absolute inset-0 rounded-[28px] overflow-hidden pointer-events-none">
+        {/* Top-to-bottom sweeping pastel curve */}
+        <div
+          className={`absolute -right-24 -top-12 w-[310px] h-[440px] rounded-[100%] ${theme.wave1} transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-translate-x-2`}
+        />
+        {/* Secondary bottom sweeping curve */}
+        <div
+          className={`absolute -right-12 -bottom-28 w-[340px] h-[260px] rounded-[100%] ${theme.wave2} transition-transform duration-700 ease-out group-hover:scale-110`}
+        />
+        {/* Subtle inner glass sheen */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-white/30" />
+      </div>
+
+      {/* Top Bar: Category Pill & Index Counter */}
+      <div
+        className="relative z-10 flex items-center justify-between"
+        style={{ transform: "translateZ(30px)" }}
+      >
+        <span
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full ${theme.pill} backdrop-blur-md text-[11px] font-bold tracking-[0.08em] uppercase shadow-[0_2px_10px_rgba(0,0,0,0.04)]`}
+        >
+          <span className={`w-2 h-2 rounded-full ${theme.dot}`} />
+          {job.category}
+        </span>
+
+        <span className="text-xs font-semibold tracking-wider text-[#181822]">
+          0{index + 1} <span className="text-black/40 font-normal">/ 0{filteredJobs.length || 6}</span>
+        </span>
+      </div>
+
+      {/* Middle Content: Title & Description */}
+      <div
+        className="relative z-10 my-auto pt-4 pr-16 sm:pr-20"
+        style={{ transform: "translateZ(42px)" }}
+      >
+        <h3 className="text-[26px] sm:text-[28px] md:text-[32px] leading-[1.12] font-extrabold tracking-[-0.03em] text-[#171821]">
+          {job.title}
+        </h3>
+
+        <p className="text-[13.5px] md:text-[14px] text-[#171821]/75 font-medium leading-[1.5] mt-3.5 line-clamp-3">
+          {job.desc}
+        </p>
+      </div>
+
+      {/* Bottom Section: Compact Metadata & Left-Aligned Circular Arrow Button */}
+      <div
+        className="relative z-10 flex flex-col items-start gap-4"
+        style={{ transform: "translateZ(38px)" }}
+      >
+        {/* Metadata Row */}
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[#171821]/85 text-xs font-semibold">
+          <span className="inline-flex items-center gap-1.5">
+            <Briefcase className="w-3.5 h-3.5 text-[#171821]" />
+            {job.type}
+          </span>
+
+          <span className="text-[#171821]/40">•</span>
+
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-[#171821]" />
+            {job.location}
+          </span>
+
+          {job.experience && (
+            <>
+              <span className="text-[#171821]/40">•</span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#171821]" />
+                {job.experience}
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Bottom-Left Circular Action Button */}
+        <button
+          type="button"
+          onClick={() => setActiveJob(job)}
+          aria-label={`View details for ${job.title}`}
+          className="w-11 h-11 rounded-full bg-[#171821] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(23,24,33,0.28)] transition-all duration-300 hover:bg-black hover:scale-110 group-hover:translate-x-0.5 cursor-pointer"
+        >
+          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+        </button>
+      </div>
+
+      {/* Floating 3D Object (Positioned outside overflow-hidden so it pops out of the card edge on hover) */}
+      <div
+        className="absolute -right-4 bottom-8 z-20 pointer-events-none transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-2"
+        style={{ transform: "translateZ(68px)" }}
+      >
+        {renderCardIllustration(job.category, index)}
+      </div>
+    </div>
+  );
+})}
               </div>
             ) : (
               <div className="w-full py-20 text-center border border-dashed border-black/10 rounded-3xl">
@@ -578,7 +746,7 @@ const CareerPage = () => {
       {activeJob && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
           <div className="relative bg-white w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-[scaleUp_0.3s_cubic-bezier(0.16,1,0.3,1)]">
-            
+
             {/* Modal Header */}
             <div className={`p-8 pb-6 border-b border-black/5 ${activeJob.color} relative`}>
               <button
@@ -590,7 +758,7 @@ const CareerPage = () => {
               >
                 <X className="w-5 h-5" />
               </button>
-              
+
               <div className="pr-12">
                 <span className="text-[10px] font-bold tracking-[0.2em] text-black/60 uppercase block mb-1.5">
                   OPPORTUNITIES / {activeJob.category}
@@ -607,7 +775,7 @@ const CareerPage = () => {
 
             {/* Modal Content Scrollable Area */}
             <div className="flex-grow overflow-y-auto p-8 space-y-8">
-              
+
               {/* Job Description */}
               <div>
                 <h4 className="font-orbitron text-xs font-black tracking-[0.2em] text-zinc-400 uppercase mb-3">
