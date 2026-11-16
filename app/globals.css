@@ -116,3 +116,147 @@
     }
   }
 }
+
+
+                @property --border-angle {
+                    syntax: "<angle>";
+                    inherits: true;
+                    initial-value: 0deg;
+                }
+
+                @keyframes spinBorder {
+                    to {
+                        --border-angle: 360deg;
+                    }
+                }
+
+                @keyframes text3DReveal {
+                    0% {
+                        opacity: 0;
+                        transform: perspective(900px) rotateX(-85deg) translateY(36px) translateZ(-40px);
+                    }
+                    65% {
+                        opacity: 1;
+                        transform: perspective(900px) rotateX(8deg) translateY(-2px) translateZ(12px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: perspective(900px) rotateX(0deg) translateY(0) translateZ(0);
+                    }
+                }
+
+                @keyframes outline3DFloat {
+                    0%,
+                    100% {
+                        transform: perspective(1000px) rotateY(-5deg) rotateX(2deg) translateZ(0px);
+                        filter: drop-shadow(0 6px 0 rgba(16, 216, 118, 0.16))
+                            drop-shadow(0 0 16px rgba(81, 237, 178, 0.2));
+                    }
+                    50% {
+                        transform: perspective(1000px) rotateY(5deg) rotateX(-2deg) translateZ(14px);
+                        filter: drop-shadow(-4px 8px 0 rgba(16, 216, 118, 0.28))
+                            drop-shadow(0 0 28px rgba(81, 237, 178, 0.42));
+                    }
+                }
+
+                @keyframes fadeUpIn {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(24px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .perspective-stage {
+                    perspective: 1100px;
+                    transform-style: preserve-3d;
+                }
+
+                .char-3d {
+                    display: inline-block;
+                    opacity: 0;
+                    transform-origin: bottom center;
+                    animation: text3DReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                    text-shadow: 0 2px 0 rgba(16, 216, 118, 0.18),
+                        0 10px 25px rgba(0, 0, 0, 0.65);
+                }
+
+                .animate-hero-2 {
+                    opacity: 0;
+                    animation: fadeUpIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.28s forwards;
+                }
+
+                .animate-hero-3 {
+                    opacity: 0;
+                    animation: fadeUpIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.42s forwards;
+                }
+
+                .animate-hero-4 {
+                    opacity: 0;
+                    animation: fadeUpIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+                }
+
+                .outline-title-3d {
+                    color: transparent;
+                    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.82);
+                    transform-style: preserve-3d;
+                    animation: outline3DFloat 5.5s ease-in-out infinite;
+                    transition: -webkit-text-stroke 0.3s ease;
+                }
+
+                .outline-title-3d:hover {
+                    -webkit-text-stroke: 2px #51edb2;
+                }
+
+                @media (min-width: 768px) {
+                    .outline-title-3d {
+                        -webkit-text-stroke: 2px rgba(255, 255, 255, 0.85);
+                    }
+                }
+
+               
+                .card-skewed-shell {
+                    background: transparent;
+                    transform: skewX(-8deg);
+                    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+                }
+
+                .card-skewed-shell:hover {
+                    transform: skewX(-8deg) translateY(-5px);
+                    box-shadow: 0 20px 40px -10px rgba(16, 216, 118, 0.28);
+                }
+
+              
+                .card-content-straight {
+                    transform: skewX(8deg);
+                }
+
+                .card-3d-border {
+                    position: absolute;
+                    inset: 0;
+                    border-radius: 1rem;
+                    padding: 1.5px;
+                    background: conic-gradient(
+                        from var(--border-angle),
+                        rgba(16, 216, 118, 0.95) 0%,
+                        rgba(81, 237, 178, 0.25) 25%,
+                        rgba(255, 255, 255, 0.15) 50%,
+                        rgba(16, 216, 118, 0.9) 75%,
+                        rgba(81, 237, 178, 0.95) 100%
+                    );
+                    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                        linear-gradient(#fff 0 0);
+                    -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+                    animation: spinBorder 4.5s linear infinite;
+                    pointer-events: none;
+                }
+
+                .card-skewed-shell:hover .card-3d-border {
+                    padding: 2px;
+                    animation-duration: 2s;
+                }
+            
