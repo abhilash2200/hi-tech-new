@@ -197,18 +197,18 @@ const AnimationHero: React.FC<AnimationHeroProps> = ({ onExploreWork }) => {
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover object-center"
         >
-          <source src="/assets/img/2D_animation/2d.mp4" type="video/mp4" />
+          <source src="/assets/img/2D_animation/2d.mov" type="video/mp4" />
         </video>
 
         {/* Cinematic Vignette & Dark Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040807]/95 via-[#060C0A]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#000]/70 via-[#000]/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#040807]/90 via-transparent to-[#040807]/60" />
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           MAIN HERO CONTENT
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-20 pt-28 sm:pt-32 lg:pt-0 my-auto flex flex-col justify-center">
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-6 sm:px-12 lg:px-20 pt-28 sm:pt-32 lg:pt-0 my-auto flex flex-col justify-center">
         <div className="max-w-5xl perspective-stage">
           {/* Line 1: 3D Per-Character Flip-In "WE MAKE" */}
           <h1
@@ -233,7 +233,7 @@ const AnimationHero: React.FC<AnimationHeroProps> = ({ onExploreWork }) => {
                 playsInline
                 className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700"
               >
-                <source src="/assets/img/2D_animation/2d.mp4" type="video/mp4" />
+                <source src="/assets/img/2D_animation/2d.mov" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-gradient-to-tr from-black/25 via-transparent to-[#51EDB2]/15 pointer-events-none" />
             </div>
@@ -259,7 +259,7 @@ const AnimationHero: React.FC<AnimationHeroProps> = ({ onExploreWork }) => {
             <button
               type="button"
               onClick={handleExploreClick}
-              className="inline-flex items-center justify-center px-8 py-3.5 sm:px-9 sm:py-4 rounded-lg bg-[#10D876] hover:bg-[#51EDB2] text-[#04120B] font-orbitron font-extrabold text-xs sm:text-sm tracking-[0.12em] uppercase transition-all duration-300 shadow-[0_0_25px_rgba(16,216,118,0.35)] hover:shadow-[0_0_38px_rgba(81,237,178,0.65)] hover:-translate-y-0.5 cursor-pointer"
+              className="inline-flex items-center justify-center px-8 py-3.5 sm:px-9 sm:py-4 rounded-md bg-[#06402B] hover:bg-[#06402A] text-[#fff] font-orbitron font-extrabold text-xs sm:text-sm tracking-[0.12em] uppercase transition-all duration-300  hover:-translate-y-0.5 cursor-pointer"
             >
               EXPLORE OUR WORK
             </button>
@@ -270,7 +270,7 @@ const AnimationHero: React.FC<AnimationHeroProps> = ({ onExploreWork }) => {
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           BOTTOM-RIGHT SKEWED CHARACTER CARDS
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="hero-cards-container relative z-20 w-full max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-20 pb-8 sm:pb-10 pt-20 lg:pt-0 flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-6 sm:gap-8">
+      <div className="hero-cards-container relative z-20 w-full max-w-[1800px] mx-auto px-6 sm:px-12 lg:px-20 pb-8 sm:pb-10 pt-20 lg:pt-0 flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-6 sm:gap-8">
         {/* Card 1: 2D Motion */}
         <Link
           href="/2d-animation"
