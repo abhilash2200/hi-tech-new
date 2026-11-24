@@ -17,6 +17,7 @@ const STANDALONE_PAGES = new Set([
   "/career",
   "/blog",
   "/animation",
+  "/2d-animation",
 ]);
 
 const MainLayout = ({ children }: MainLayoutProps) => {

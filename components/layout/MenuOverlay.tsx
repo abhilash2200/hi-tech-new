@@ -28,9 +28,10 @@ const navLinks = [
 const secondaryLinks = [
   { label: "About Us", href: "/about-us" },
   { label: "Testimonials", href: "/testimonials" },
-  { label: "Blog", href: "/blog" },
+  { label: "Our Story", href: "/our-story" },
   { label: "Career", href: "/career" },
   { label: "Contact Us", href: "/contact-us" },
+  { label: "Blog", href: "/blog" },
 ];
 
 interface MenuOverlayProps {

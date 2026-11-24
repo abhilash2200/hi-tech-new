@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useRef } from "react";
@@ -15,10 +16,18 @@ interface HorizontalWrapperProps {
   children: React.ReactNode;
 }
 
+interface StoryCardPosition {
+  element: HTMLElement;
+  left: number;
+  width: number;
+}
+
 interface GeometryData {
   totalWidth: number;
   scrollDistance: number;
   snapProgresses: number[];
+  storySnaps: number[];
+  storyCards: StoryCardPosition[];
 }
 
 const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
@@ -28,39 +37,93 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
 
   useGSAP(
     () => {
-      // Always reset scroll to top on mount / route transition
       window.scrollTo(0, 0);
       ScrollTrigger.clearScrollMemory();
 
       const mm = gsap.matchMedia();
 
-      // Desktop: Pin and horizontal scrub (≥ 1024px)
       mm.add("(min-width: 1024px)", () => {
         const wrapper = wrapperRef.current;
         const container = containerRef.current;
+
         if (!wrapper || !container) return;
+
+        const getOffset = (element: HTMLElement) => {
+          let left = 0;
+          let current: HTMLElement | null = element;
+
+          while (current && current !== wrapper) {
+            left += current.offsetLeft;
+            current = current.offsetParent as HTMLElement | null;
+          }
+
+          return left;
+        };
 
         const calculateGeometry = (): GeometryData => {
           const totalWidth = wrapper.scrollWidth;
-          const scrollDistance = Math.max(0, totalWidth - window.innerWidth);
-          const sections = gsap.utils.toArray<HTMLElement>(".horizontal-section");
+          const scrollDistance = Math.max(
+            0,
+            totalWidth - window.innerWidth
+          );
+
+          const sections =
+            gsap.utils.toArray<HTMLElement>(".horizontal-section");
+
+          const storyElements =
+            gsap.utils.toArray<HTMLElement>(".story-snap-card");
+
+          const storyCards: StoryCardPosition[] = storyElements.map(
+            (element) => ({
+              element,
+              left: getOffset(element),
+              width: element.offsetWidth,
+            })
+          );
+
+          const sectionSnaps = sections.map((section) =>
+            Math.min(
+              1,
+              Math.max(
+                0,
+                section.offsetLeft / Math.max(1, scrollDistance)
+              )
+            )
+          );
+
+          const storySnaps = storyCards.map((card) => {
+            const centeredPosition =
+              card.left - (window.innerWidth - card.width) / 2;
+
+            return Math.min(
+              1,
+              Math.max(
+                0,
+                centeredPosition / Math.max(1, scrollDistance)
+              )
+            );
+          });
 
           const snapProgresses =
-            scrollDistance > 0
-              ? sections.map((sec) =>
-                  Math.min(1, Math.max(0, sec.offsetLeft / scrollDistance))
-                )
-              : [0];
+            storySnaps.length > 0
+              ? [...new Set(storySnaps)].sort((a, b) => a - b)
+              : [...new Set(sectionSnaps)].sort((a, b) => a - b);
 
-          return { totalWidth, scrollDistance, snapProgresses };
+          return {
+            totalWidth,
+            scrollDistance,
+            snapProgresses,
+            storySnaps,
+            storyCards,
+          };
         };
 
         let geometry = calculateGeometry();
 
-        // 1. Initialize Lenis for smooth vertical scroll physics
         const lenis = new Lenis({
           duration: 1.15,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          easing: (t) =>
+            Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           orientation: "vertical",
           gestureOrientation: "vertical",
           smoothWheel: true,
@@ -68,28 +131,82 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
 
         lenis.on("scroll", ScrollTrigger.update);
 
-        // 2. Synchronize Lenis and GSAP via a single unified requestAnimationFrame ticker
         const updateRaf = (time: number) => {
           lenis.raf(time * 1000);
         };
+
         gsap.ticker.add(updateRaf);
         gsap.ticker.lagSmoothing(0);
 
-        // 3. Cache geometry on resize — NO reading offsetLeft inside scroll loops
+        let activeStoryIndex = 0;
+
+        const updateStoryCards = (progress: number) => {
+          if (!geometry.storyCards.length) return;
+
+          const currentScroll =
+            progress * geometry.scrollDistance;
+
+          const viewportCenter = window.innerWidth / 2;
+
+          let activeIndex = 0;
+          let closestDistance = Infinity;
+
+          if (progress <= 0.01) {
+            activeIndex = 0;
+          } else if (progress >= 0.99) {
+            activeIndex = geometry.storyCards.length - 1;
+          } else {
+            geometry.storyCards.forEach((card, index) => {
+              const cardCenter =
+                card.left - currentScroll + card.width / 2;
+
+              const distance = Math.abs(
+                cardCenter - viewportCenter
+              );
+
+              if (distance < closestDistance) {
+                closestDistance = distance;
+                activeIndex = index;
+              }
+            });
+          }
+
+          activeStoryIndex = activeIndex;
+
+          geometry.storyCards.forEach((card, index) => {
+            const active = index === activeIndex;
+
+            gsap.to(card.element, {
+              opacity: active ? 1 : 0.25,
+              scale: active ? 1 : 0.94,
+              filter: active ? "blur(0px)" : "blur(1px)",
+              duration: 0.3,
+              overwrite: "auto",
+            });
+          });
+        };
+
         let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+
         const resizeObserver = new ResizeObserver(() => {
           if (resizeTimer) clearTimeout(resizeTimer);
+
           resizeTimer = setTimeout(() => {
             geometry = calculateGeometry();
             ScrollTrigger.refresh();
-          }, 100);
+          }, 150);
         });
+
         resizeObserver.observe(wrapper);
 
-        // 4. GSAP horizontal scroll tween with magnetic snapping
         const tween = gsap.to(wrapper, {
           x: () => -geometry.scrollDistance,
           ease: "none",
+
+          onUpdate: function () {
+            updateStoryCards(this.progress());
+          },
+
           scrollTrigger: {
             trigger: container,
             pin: true,
@@ -98,55 +215,62 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
             end: () => `+=${geometry.scrollDistance}`,
             invalidateOnRefresh: true,
             anticipatePin: 1,
+
             snap: {
-              snapTo: (progress: number) => {
-                if (!geometry.snapProgresses.length) return progress;
-                let closest = geometry.snapProgresses[0];
-                let minDiff = Math.abs(progress - closest);
-                for (let i = 1; i < geometry.snapProgresses.length; i++) {
-                  const diff = Math.abs(progress - geometry.snapProgresses[i]);
-                  if (diff < minDiff) {
-                    minDiff = diff;
-                    closest = geometry.snapProgresses[i];
-                  }
+              snapTo: (progress, self) => {
+                const snaps = geometry.snapProgresses;
+
+                if (!snaps.length) return progress;
+
+                if (geometry.storySnaps.length > 0) {
+                  const direction = self?.direction || 1;
+
+                  const nextIndex =
+                    direction > 0
+                      ? Math.min(activeStoryIndex + 1, snaps.length - 1)
+                      : Math.max(activeStoryIndex - 1, 0);
+
+                  return snaps[nextIndex];
                 }
-                return closest;
+
+                return gsap.utils.snap(snaps, progress);
               },
-              duration: { min: 0.2, max: 0.5 },
+
+              duration: { min: 0.35, max: 0.55 },
               delay: 0.08,
               ease: "power2.out",
             },
           },
         });
 
-        // Trigger initial refresh once DOM is fully painted
         const refreshTimer = setTimeout(() => {
           geometry = calculateGeometry();
           ScrollTrigger.refresh();
-        }, 150);
+          updateStoryCards(tween.progress());
+        }, 200);
 
         return () => {
           if (resizeTimer) clearTimeout(resizeTimer);
+
           clearTimeout(refreshTimer);
           resizeObserver.disconnect();
+
           gsap.ticker.remove(updateRaf);
           lenis.destroy();
           tween.kill();
         };
       });
 
-      // Mobile / Tablet (< 1024px): Strictly 100% native vertical scroll
-      // No horizontal pinning, no touch interception, no synthetic scroll hijacking
       mm.add("(max-width: 1023px)", () => {
-        // Native browser handles vertical scrolling naturally
-        return () => {};
+        return () => { };
       });
 
-      return () => {
-        mm.revert();
-      };
+      return () => mm.revert();
     },
-    { scope: containerRef, dependencies: [pathname] }
+    {
+      scope: containerRef,
+      dependencies: [pathname],
+    }
   );
 
   return (
