@@ -18,14 +18,18 @@ const STANDALONE_PAGES = new Set([
   "/blog",
   "/animation",
   "/2d-animation",
+  "/3d-animation",
 ]);
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const pathname = usePathname();
 
   const isStandalone =
-    STANDALONE_PAGES.has(pathname) ||
-    pathname.startsWith("/blog/");
+  STANDALONE_PAGES.has(pathname) ||
+  pathname.startsWith("/blog/") ||
+  pathname.startsWith("/2d-animation/") ||
+  pathname.startsWith("/3d-animation/");
+  
 
   const isTestimonials = pathname === "/testimonials";
 
