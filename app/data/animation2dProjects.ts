@@ -21,25 +21,25 @@ export const ANIMATION_2D_PROJECTS: AnimationProject[] = [
   {
     id: "on-1",
     title: "The Legend",
-    image: "/assets/img/2D_animation/posters/the-legend.jpg",
+    image: "/assets/img/2D_animation/poster1.webp",
     stage: "ongoing",
   },
   {
     id: "on-2",
     title: "Neon Chronicles",
-    image: "/assets/img/2D_animation/posters/neon-chronicles.jpg",
+    image: "/assets/img/2D_animation/poster2.webp",
     stage: "ongoing",
   },
   {
     id: "on-3",
     title: "Shadow Realm",
-    image: "/assets/img/2D_animation/posters/shadow-realm.jpg",
+    image: "/assets/img/2D_animation/poster3.webp",
     stage: "ongoing",
   },
   {
     id: "on-4",
     title: "Emerald Horizon",
-    image: "/assets/img/2D_animation/posters/emerald-horizon.jpg",
+    image: "/assets/img/2D_animation/poster4.webp",
     stage: "ongoing",
   },
 
@@ -47,25 +47,25 @@ export const ANIMATION_2D_PROJECTS: AnimationProject[] = [
   {
     id: "rec-1",
     title: "Cyber Drift",
-    image: "/assets/img/2D_animation/posters/cyber-drift.jpg",
+    image: "/assets/img/2D_animation/poster5.webp",
     stage: "recent",
   },
   {
     id: "rec-2",
     title: "Lost Echoes",
-    image: "/assets/img/2D_animation/posters/lost-echoes.jpg",
+    image: "/assets/img/2D_animation/poster6.webp",
     stage: "recent",
   },
   {
     id: "rec-3",
     title: "Solar Vanguard",
-    image: "/assets/img/2D_animation/posters/solar-vanguard.jpg",
+    image: "/assets/img/2D_animation/poster7.webp",
     stage: "recent",
   },
   {
     id: "rec-4",
     title: "Midnight Ronin",
-    image: "/assets/img/2D_animation/posters/midnight-ronin.jpg",
+    image: "/assets/img/2D_animation/poster8.webp",
     stage: "recent",
   },
 
@@ -73,25 +73,25 @@ export const ANIMATION_2D_PROJECTS: AnimationProject[] = [
   {
     id: "past-1",
     title: "Ancient Sparks",
-    image: "/assets/img/2D_animation/posters/ancient-sparks.jpg",
+    image: "/assets/img/2D_animation/poster9.webp",
     stage: "past",
   },
   {
     id: "past-2",
     title: "Vortex Pulse",
-    image: "/assets/img/2D_animation/posters/vortex-pulse.jpg",
+    image: "/assets/img/2D_animation/poster10.webp",
     stage: "past",
   },
   {
     id: "past-3",
     title: "Phantom Grid",
-    image: "/assets/img/2D_animation/posters/phantom-grid.jpg",
+    image: "/assets/img/2D_animation/poster11.webp",
     stage: "past",
   },
   {
     id: "past-4",
     title: "Origin Zero",
-    image: "/assets/img/2D_animation/posters/origin-zero.jpg",
+    image: "/assets/img/2D_animation/poster12.webp",
     stage: "past",
   },
 ];
