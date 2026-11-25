@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ArrowLeft, Users } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { AnimationProject, ProjectStage } from "../../data/animation2dProjects";
+import { AnimationProject, ProjectStage } from "../../data/animation3dProjects";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -72,16 +72,16 @@ export default function ProjectDetailClient({
         {/* Top Bar: Back Link + Brand Badge */}
         <div className="detail-hero-item flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
           <Link
-            href="/2d-animation"
+            href="/3d-animation"
             className="inline-flex items-center gap-2 font-orbitron text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-700 hover:text-[#C81D25] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 text-[#0284C7]" />
-            Back to 2D Animation
+            Back to 3D Animation
           </Link>
 
           <span className="inline-flex items-center gap-2 rounded-lg bg-white px-3.5 py-1.5 shadow-sm border border-slate-200 font-orbitron text-[11px] font-extrabold tracking-wider uppercase">
             <span className="text-[#C81D25]">Hi-Tech</span>
-            <span className="text-[#0284C7]">2D Studio</span>
+            <span className="text-[#0284C7]">3D Studio</span>
           </span>
         </div>
 

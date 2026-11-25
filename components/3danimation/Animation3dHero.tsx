@@ -6,13 +6,13 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
 
-interface Animation2dHeroProps {
+interface Animation3dHeroProps {
   onExploreWork?: () => void;
 }
 
 const HERO_LINE_ONE = "WE MAKE";
 
-const Animation2dHero: React.FC<Animation2dHeroProps> = ({ onExploreWork }) => {
+const Animation3dHero: React.FC<Animation3dHeroProps> = ({ onExploreWork }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleExploreClick = () => {
@@ -286,4 +286,4 @@ const Animation2dHero: React.FC<Animation2dHeroProps> = ({ onExploreWork }) => {
   );
 };
 
-export default Animation2dHero;
+export default Animation3dHero;

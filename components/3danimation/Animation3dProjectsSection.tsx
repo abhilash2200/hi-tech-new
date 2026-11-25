@@ -7,10 +7,11 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  ANIMATION_2D_PROJECTS,
+  ANIMATION_3D_PROJECTS,
   createProjectSlug,
   ProjectStage,
-} from "../../app/data/animation2dProjects";
+} from "../../app/data/animation3dProjects";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,7 +26,7 @@ const STAGE_BLOCKS: StageBlockConfig[] = [
   { stage: "past", heading: "Past Projects" },
 ];
 
-const Animation2dProjectsSection: React.FC = () => {
+const Animation3dProjectsSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const Animation2dProjectsSection: React.FC = () => {
     >
       <div className="max-w-[1800px] mx-auto space-y-20 sm:space-y-24">
         {STAGE_BLOCKS.map(({ stage, heading }) => {
-          const projects = ANIMATION_2D_PROJECTS.filter(
+          const projects = ANIMATION_3D_PROJECTS.filter(
             (item) => item.stage === stage
           );
 
@@ -115,7 +116,7 @@ const Animation2dProjectsSection: React.FC = () => {
                   return (
                     <Link
                       key={project.id}
-                      href={`/2d-animation/${slug}`}
+                      href={`/3d-animation/${slug}`}
                       className="poster-card group relative aspect-[2/3] w-full overflow-hidden rounded-2xl border border-[#E5E5E5] bg-white transition-colors duration-300 hover:border-[#E53935]"
                     >
                       <Image
@@ -144,4 +145,4 @@ const Animation2dProjectsSection: React.FC = () => {
   );
 };
 
-export default Animation2dProjectsSection;
+export default Animation3dProjectsSection;

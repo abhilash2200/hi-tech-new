@@ -23,7 +23,7 @@ export function createProjectSlug(title: string): string {
     .replace(/-+/g, "-");
 }
 
-export const ANIMATION_2D_PROJECTS: AnimationProject[] = [
+export const ANIMATION_3D_PROJECTS: AnimationProject[] = [
   // 1. ONGOING PROJECTS
   {
     id: "on-1",

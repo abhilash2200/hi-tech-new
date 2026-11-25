@@ -1,9 +1,10 @@
+
 import React from "react";
 import { notFound } from "next/navigation";
 import {
-  ANIMATION_2D_PROJECTS,
+  ANIMATION_3D_PROJECTS,
   createProjectSlug,
-} from "../../data/animation2dProjects";
+} from "../../data/animation3dProjects";
 import ProjectDetailClient from "./ProjectDetailClient";
 
 interface ProjectDetailPageProps {
@@ -11,7 +12,7 @@ interface ProjectDetailPageProps {
 }
 
 export async function generateStaticParams() {
-  return ANIMATION_2D_PROJECTS.map((project) => ({
+  return ANIMATION_3D_PROJECTS.map((project) => ({
     slug: createProjectSlug(project.title),
   }));
 }
@@ -21,7 +22,7 @@ export default async function ProjectDetailPage({
 }: ProjectDetailPageProps) {
   const { slug } = await params;
 
-  const project = ANIMATION_2D_PROJECTS.find(
+  const project = ANIMATION_3D_PROJECTS.find(
     (item) => createProjectSlug(item.title) === slug
   );
 
