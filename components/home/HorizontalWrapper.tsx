@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useRef } from "react";
@@ -31,93 +30,113 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
 
       const mm = gsap.matchMedia();
 
+      /* ================= DESKTOP (1024px and above) ================= */
       mm.add("(min-width: 1024px)", () => {
         const getScrollDistance = () =>
           Math.max(0, wrapper.scrollWidth - window.innerWidth);
 
         let scrollDistance = getScrollDistance();
 
+        /* ---------------- STORY SECTION (looping cards) ---------------- */
         const storySection = wrapper.querySelector<HTMLElement>(
           "[data-story-section]"
         );
-
+        const pin = storySection?.querySelector<HTMLElement>(
+          "[data-story-pin]"
+        );
+        const stage = storySection?.querySelector<HTMLElement>(
+          "[data-story-stage]"
+        );
+        const curve = storySection?.querySelector<SVGPathElement>(
+          "[data-story-curve]"
+        );
         const cards = storySection
           ? gsap.utils.toArray<HTMLElement>(
               storySection.querySelectorAll(".story-snap-card")
             )
           : [];
 
-        const header = storySection?.querySelector<HTMLElement>(
-          "[data-story-header]"
-        );
+        const n = cards.length;
+        const step = Number(stage?.dataset.step ?? 440); // px between cards
+        const loopLen = n * step; // scroll distance for one full lap
+        const activeX = 60; // left position of the active (first) card
+        const waveLen = 1100; // length of one wave of the orange curve
 
-        let storyStartLeft = 0;
-        let cardCenters: number[] = [];
+        const INACTIVE_SCALE = 0.95;
+        const ACTIVE_SCALE = 1.1;
 
-        const calculateStoryPositions = () => {
-          if (!storySection || !cards.length) return;
+        let W = 0;
+        let H = 0;
+        let dotCx = 0;
+        let dotCy = 0;
 
-          const sectionRect = storySection.getBoundingClientRect();
-          storyStartLeft = sectionRect.left;
+        // The orange curve: low on the left, rising to the right, with a wave.
+        // Cards use this same formula, so their dots always sit on the line.
+        const curveY = (x: number) =>
+          H * (0.72 - 0.3 * (x / W)) -
+          H * 0.035 * Math.sin((2 * Math.PI * x) / waveLen);
 
-          cardCenters = cards.map((card) => {
-            const rect = card.getBoundingClientRect();
-            return rect.left - sectionRect.left + rect.width / 2;
-          });
-        };
+        const measure = () => {
+          if (!stage || !n) return;
 
-        const updateCards = () => {
-          if (!storySection || !cards.length) return;
+          W = stage.clientWidth;
+          H = stage.clientHeight;
 
-          const sectionRect = storySection.getBoundingClientRect();
-
-          // Actual horizontal movement of the Story section.
-          const storyScroll = storyStartLeft - sectionRect.left;
-
-          // First card remains active at the beginning.
-          let activeIndex = 0;
-
-          // Next card activates only after scroll crosses
-          // the midpoint between consecutive cards.
-          for (let i = 1; i < cardCenters.length; i++) {
-            const threshold =
-              (cardCenters[i - 1] + cardCenters[i]) / 2;
-
-            if (storyScroll >= threshold) {
-              activeIndex = i;
-            }
+          const dot = cards[0].querySelector<HTMLElement>("[data-story-dot]");
+          if (dot) {
+            dotCx = dot.offsetLeft + dot.offsetWidth / 2;
+            dotCy = dot.offsetTop + dot.offsetHeight / 2;
           }
 
-          cards.forEach((card, index) => {
-            const active = index === activeIndex;
+          // scale around the dot so the dot never leaves the curve
+          gsap.set(cards, { transformOrigin: `${dotCx}px ${dotCy}px` });
 
-            gsap.set(card, {
-              opacity: active ? 1 : 0.25,
-              scale: active ? 1 : 0.94,
-              filter: active ? "blur(0px)" : "blur(1px)",
-              transformOrigin: "center center",
-            });
-          });
+          if (curve) {
+            const pts: string[] = [];
+            for (let x = -20; x <= W + 20; x += 20) {
+              pts.push(`${x === -20 ? "M" : "L"}${x} ${curveY(x).toFixed(1)}`);
+            }
+            curve.setAttribute("d", pts.join(" "));
+          }
         };
 
-        const updateHeader = () => {
-          if (!storySection || !header) return;
+        const updateStory = () => {
+          if (!storySection || !pin || !n) return;
 
           const rect = storySection.getBoundingClientRect();
+          const maxShift = Math.max(1, rect.width - window.innerWidth);
+          const shift = gsap.utils.clamp(0, maxShift, -rect.left);
 
-          const visible =
-            rect.right > 0 && rect.left < window.innerWidth;
+          // keep header + stage fixed on screen while the section scrolls by
+          gsap.set(pin, { x: shift });
 
-          gsap.set(header, {
-            x: -rect.left,
-            autoAlpha: visible ? 1 : 0,
+          // 1px of scroll = 1px of card movement
+          const s = shift;
+
+          cards.forEach((card, i) => {
+            // position relative to the active slot, wrapped into [-step, loopLen - step)
+            // -> a card leaving on the left re-enters from the right
+            const d =
+              ((((i * step - s + step) % loopLen) + loopLen) % loopLen) - step;
+
+            const x = activeX + d;
+            const y = curveY(x + dotCx) - dotCy;
+
+            const k = Math.min(Math.abs(d) / step, 1);
+            const opacity = d < 0 ? 1 - k : 1 - 0.45 * k; // fades out as it leaves
+
+            // active card is larger, inactive cards stay smaller
+            const scale =
+              INACTIVE_SCALE + (ACTIVE_SCALE - INACTIVE_SCALE) * (1 - k);
+
+            gsap.set(card, { x, y, opacity, scale });
           });
         };
 
+        /* ---------------- SMOOTH SCROLL ---------------- */
         const lenis = new Lenis({
           duration: 1.15,
-          easing: (t) =>
-            Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           orientation: "vertical",
           gestureOrientation: "vertical",
           smoothWheel: true,
@@ -132,26 +151,13 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
         gsap.ticker.add(updateRaf);
         gsap.ticker.lagSmoothing(0);
 
-        calculateStoryPositions();
-
-        // Set first card active immediately on page load.
-        cards.forEach((card, index) => {
-          gsap.set(card, {
-            opacity: index === 0 ? 1 : 0.25,
-            scale: index === 0 ? 1 : 0.94,
-            filter: index === 0 ? "blur(0px)" : "blur(1px)",
-          });
-        });
+        measure();
+        updateStory(); // first card active on load
 
         const tween = gsap.to(wrapper, {
           x: () => -scrollDistance,
           ease: "none",
-
-          onUpdate: () => {
-            updateCards();
-            updateHeader();
-          },
-
+          onUpdate: updateStory,
           scrollTrigger: {
             trigger: container,
             start: "top top",
@@ -165,11 +171,10 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
 
         const refresh = () => {
           scrollDistance = getScrollDistance();
-          calculateStoryPositions();
+          measure();
           tween.invalidate();
           ScrollTrigger.refresh();
-          updateCards();
-          updateHeader();
+          updateStory();
         };
 
         const observer = new ResizeObserver(() => {
@@ -189,6 +194,33 @@ const HorizontalWrapper = ({ children }: HorizontalWrapperProps) => {
 
           tween.scrollTrigger?.kill();
           tween.kill();
+        };
+      });
+
+      /* ================= MOBILE / TABLET (below 1024px) =================
+         Normal vertical scroll. Cards reveal one by one. */
+      mm.add("(max-width: 1023px)", () => {
+        const mobileCards = gsap.utils.toArray<HTMLElement>(
+          wrapper.querySelectorAll(".story-snap-card")
+        );
+
+        mobileCards.forEach((card) => {
+          gsap.from(card, {
+            opacity: 0,
+            y: 70,
+            scale: 0.92,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          });
+        });
+
+        return () => {
+          mobileCards.forEach((card) => gsap.set(card, { clearProps: "all" }));
         };
       });
 
