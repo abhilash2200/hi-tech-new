@@ -106,7 +106,7 @@ const StoryTimelineSection: React.FC = () => {
         <div
           className="absolute inset-0 opacity-[0.07] pointer-events-none bg-repeat"
           style={{
-            backgroundImage: "url('/images/sketch-bg-pattern.png')",
+            backgroundImage: "url('/images/sketch-bg-pattern.webp')",
             backgroundSize: "500px",
           }}
         />
