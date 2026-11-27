@@ -16,7 +16,7 @@ const milestones = [
     title: "The First Sketch",
     description:
       "It all started in a small creative studio with a handful of passionate storytellers, artists and animators. Our dream was simple – to bring ideas, characters and emotions to life through animation.",
-    image: "/images/story-2021.jpg",
+    image: "/images/Transformers-earth-spark.jpeg",
     blobRadius: "54% 46% 42% 58% / 60% 45% 55% 40%",
   },
   {
@@ -24,7 +24,7 @@ const milestones = [
     title: "The First Sketch",
     description:
       "It all started in a small creative studio with a handful of passionate storytellers, artists and animators. Our dream was simple – to bring ideas, characters and emotions to life through animation.",
-    image: "/images/story-2022.jpg",
+    image: "/images/bad-guys.webp",
     blobRadius: "48% 52% 62% 38% / 52% 58% 42% 48%",
   },
   {
@@ -32,7 +32,7 @@ const milestones = [
     title: "The First Sketch",
     description:
       "It all started in a small creative studio with a handful of passionate storytellers, artists and animators. Our dream was simple – to bring ideas, characters and emotions to life through animation.",
-    image: "/images/story-2023.jpg",
+    image: "/images/Bad-Guys-Breaking-In.jpeg",
     blobRadius: "60% 40% 48% 52% / 44% 56% 44% 56%",
   },
   {
@@ -40,7 +40,7 @@ const milestones = [
     title: "Global Expansion",
     description:
       "Scaling into international storytelling and full-length animated productions with cutting-edge pipelines and creative direction.",
-    image: "/images/story-2024.jpg",
+    image: "/images/Transformers-earth-spark.jpeg",
     blobRadius: "45% 55% 40% 60% / 55% 42% 58% 45%",
   },
   {
@@ -48,7 +48,7 @@ const milestones = [
     title: "Global Expansion",
     description:
       "Scaling into international storytelling and full-length animated productions with cutting-edge pipelines and creative direction.",
-    image: "/images/story-2024.jpg",
+    image: "/images/Transformers-Final-Season.jpeg",
     blobRadius: "45% 55% 40% 60% / 55% 42% 58% 45%",
   },
   {
@@ -56,7 +56,7 @@ const milestones = [
     title: "Global Expansion",
     description:
       "Scaling into international storytelling and full-length animated productions with cutting-edge pipelines and creative direction.",
-    image: "/images/story-2024.jpg",
+    image: "/images/bad-guys.webp",
     blobRadius: "45% 55% 40% 60% / 55% 42% 58% 45%",
   },
   {
@@ -64,7 +64,7 @@ const milestones = [
     title: "Global Expansion",
     description:
       "Scaling into international storytelling and full-length animated productions with cutting-edge pipelines and creative direction.",
-    image: "/images/story-2024.jpg",
+    image: "/images/Bad-Guys-Breaking-In.jpeg",
     blobRadius: "45% 55% 40% 60% / 55% 42% 58% 45%",
   },
 ];
